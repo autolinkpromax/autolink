@@ -103,12 +103,19 @@ const AlSkinsRegistry = (function () {
   }
 
   function resolveActive() {
-    const prefs = AlConfigStore.loadSkinPrefs();
-    if (prefs.activeId === 'custom' && prefs.customManifest) {
-      const v = validateManifest(prefs.customManifest);
-      if (v.ok) return prefs.customManifest;
+    return resolveById(AlConfigStore.loadSkinPrefs().activeId);
+  }
+
+  function resolveById(id) {
+    if (id === 'custom') {
+      const prefs = AlConfigStore.loadSkinPrefs();
+      if (prefs.customManifest) {
+        const v = validateManifest(prefs.customManifest);
+        if (v.ok) return prefs.customManifest;
+      }
+      return AL_SKIN_CLASSIC;
     }
-    return get(prefs.activeId) || AL_SKIN_CLASSIC;
+    return get(id) || AL_SKIN_CLASSIC;
   }
 
   return {
@@ -116,6 +123,7 @@ const AlSkinsRegistry = (function () {
     get,
     validateManifest,
     resolveActive,
+    resolveById,
     builtins
   };
 })();

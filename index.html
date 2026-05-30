@@ -1,51 +1,100 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f172a" />
-  <title>AutoLink — ควบคุมประตู Blynk</title>
-  <link rel="stylesheet" href="css/tokens.css" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/gate.css" />
-  <link rel="stylesheet" href="css/components.css" />
-</head>
-<body>
-  <div id="alApp" class="al-app">
-    <header class="al-topbar">
-      <h1 class="al-title">AutoLink</h1>
-      <p class="al-subtitle" id="alReadyHint">กำลังโหลด…</p>
-      <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="ตั้งค่า Skin" hidden>⚙</button>
-    </header>
-
-    <div id="alNeedConfig" class="al-need-config" hidden>
-      <p>ยังไม่พร้อม — เปิดจากเครื่อง <strong>AutoDoor-RF2</strong> (ตั้งค่า → Blynk → เปิด AutoLink) หรือใส่ Token ใน <code>js/deploy-config.js</code> ก่อนอัปโหลด GitHub</p>
-    </div>
-
-    <aside id="alSetup" class="al-setup al-setup--skin" hidden>
-      <h2 class="al-setup-title">ตั้งค่า Skin</h2>
-      <form id="alSetupForm" class="al-setup-form" autocomplete="off">
-        <label class="al-field">
-          <span>รูปแบบหน้าจอ</span>
-          <select id="alSkinSelect" name="skin"></select>
-        </label>
-        <div class="al-setup-actions">
-          <button type="submit" class="al-btn al-btn--primary">บันทึก</button>
-        </div>
-        <p class="al-setup-msg" id="alSetupMsg" role="status"></p>
-      </form>
-    </aside>
-
-    <main id="alSkinHost" class="al-skin-host" data-al-skin-active="classic"></main>
-  </div>
-
-  <script src="js/deploy-config.js"></script>
-  <script src="js/skins-registry.js"></script>
-  <script src="js/config-store.js"></script>
-  <script src="js/webhook.js"></script>
-  <script src="js/gate-controller.js"></script>
-  <script src="js/skin-engine.js"></script>
-  <script src="js/app.js"></script>
-</body>
-</html>
-
+<!DOCTYPE html>
+
+<html lang="th">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <meta name="theme-color" content="#0f172a" />
+
+  <title>AutoLink — ควบคุมประตู Blynk</title>
+
+  <link rel="stylesheet" href="css/tokens.css" />
+
+  <link rel="stylesheet" href="css/base.css" />
+
+  <link rel="stylesheet" href="css/gate.css" />
+
+  <link rel="stylesheet" href="css/components.css" />
+
+</head>
+
+<body>
+
+  <div id="alApp" class="al-app">
+
+    <header class="al-topbar">
+
+      <h1 class="al-title">AutoLink</h1>
+
+      <p class="al-subtitle" id="alReadyHint">กำลังโหลด…</p>
+
+      <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="ตั้งค่า Skin" hidden>⚙</button>
+
+    </header>
+
+
+
+    <div id="alNeedConfig" class="al-need-config" hidden>
+
+      <p>ยังไม่พร้อม — เปิดจากเครื่อง <strong>AutoDoor-RF2</strong> (ตั้งค่า → Blynk → เปิด AutoLink) หรือใส่ Token ใน <code>js/deploy-config.js</code> ก่อนอัปโหลด GitHub</p>
+
+    </div>
+
+
+
+    <aside id="alSetup" class="al-setup al-setup--skin" hidden>
+
+      <h2 class="al-setup-title">ตั้งค่า Skin</h2>
+
+      <form id="alSetupForm" class="al-setup-form" autocomplete="off">
+
+        <label class="al-field">
+
+          <span>รูปแบบหน้าจอ</span>
+
+          <select id="alSkinSelect" name="skin"></select>
+
+        </label>
+
+        <div class="al-setup-actions al-setup-actions--row">
+          <button type="button" class="al-btn al-btn--sec" id="alSetupCancel">ยกเลิก</button>
+          <button type="submit" class="al-btn al-btn--primary">บันทึก</button>
+        </div>
+
+        <p class="al-setup-msg" id="alSetupMsg" role="status"></p>
+
+      </form>
+
+    </aside>
+
+
+
+    <main id="alSkinHost" class="al-skin-host" data-al-skin-active="classic"></main>
+
+  </div>
+
+
+
+  <script src="js/deploy-config.js"></script>
+
+  <script src="js/skins-registry.js"></script>
+
+  <script src="js/config-store.js"></script>
+
+  <script src="js/webhook.js"></script>
+
+  <script src="js/gate-controller.js"></script>
+
+  <script src="js/skin-engine.js"></script>
+
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>
+
+

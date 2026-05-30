@@ -86,12 +86,28 @@ const AlGateController = (function () {
     });
   }
 
+  function snapshot() {
+    return {
+      phase: phase,
+      statusText: statusEl() ? statusEl().textContent : ''
+    };
+  }
+
+  function restore(snap) {
+    if (!snap) return;
+    clearAnimTimer();
+    setPhase(snap.phase || 'closed');
+    if (snap.statusText) setStatusText(snap.statusText);
+  }
+
   return {
     GATE_ANIM_MS,
     init,
     onAction,
     setFeedback,
     setButtonsDisabled,
-    getPhase: function () { return phase; }
+    getPhase: function () { return phase; },
+    snapshot,
+    restore
   };
 })();

@@ -6,6 +6,7 @@ const AlApp = (function () {
   };
 
   let setupOpen = false;
+  let savedSkinId = 'classic';
 
   function $(id) {
     return document.getElementById(id);
@@ -23,12 +24,26 @@ const AlApp = (function () {
     return AlConfigStore.isReady(AlConfigStore.loadBlynk());
   }
 
+  function currentSavedSkinId() {
+    const prefs = AlConfigStore.loadSkinPrefs();
+    return prefs.activeId || 'classic';
+  }
+
   function setSetupPanelOpen(open) {
     setupOpen = !!open;
     const setup = $('alSetup');
     const toggle = $('alSetupToggle');
+    const app = $('alApp');
     if (setup) setup.hidden = !setupOpen;
     if (toggle) toggle.setAttribute('aria-expanded', setupOpen ? 'true' : 'false');
+    if (app) app.classList.toggle('al-setup-open', setupOpen);
+  }
+
+  function goHome() {
+    setSetupMsg('', null);
+    setSetupPanelOpen(false);
+    syncChrome();
+    remountSkin();
   }
 
   function syncChrome() {
@@ -53,17 +68,18 @@ const AlApp = (function () {
     } else if (!setupOpen) {
       const setup = $('alSetup');
       if (setup) setup.hidden = true;
+      if (app) app.classList.remove('al-setup-open');
     }
 
     const skinHost = $('alSkinHost');
     if (skinHost) skinHost.hidden = !ready;
   }
 
-  function syncSkinSelect() {
-    const prefs = AlConfigStore.loadSkinPrefs();
+  function syncSkinSelect(value) {
     const sel = $('alSkinSelect');
     if (!sel) return;
 
+    const id = value != null ? value : currentSavedSkinId();
     sel.innerHTML = '';
     AlSkinsRegistry.list().forEach(function (item) {
       const opt = document.createElement('option');
@@ -75,7 +91,16 @@ const AlApp = (function () {
     customOpt.value = 'custom';
     customOpt.textContent = 'กำหนดเอง (นำเข้า JSON)';
     sel.appendChild(customOpt);
-    sel.value = prefs.activeId === 'custom' ? 'custom' : (prefs.activeId || 'classic');
+    sel.value = id;
+  }
+
+  function remountSkinPreview(skinId) {
+    if (!isReady()) return;
+    const snap = AlGateController.snapshot();
+    const manifest = AlSkinsRegistry.resolveById(skinId);
+    AlSkinEngine.mount(manifest);
+    AlGateController.restore(snap);
+    AlWebhook.applyUrlsToButtons();
   }
 
   function remountSkin() {
@@ -105,29 +130,54 @@ const AlApp = (function () {
     }
   }
 
+  function openSetupPanel() {
+    savedSkinId = currentSavedSkinId();
+    syncSkinSelect(savedSkinId);
+    setSetupPanelOpen(true);
+    syncChrome();
+  }
+
+  function onSetupCancel() {
+    syncSkinSelect(savedSkinId);
+    remountSkinPreview(savedSkinId);
+    goHome();
+  }
+
   function onSetupSubmit(ev) {
     ev.preventDefault();
     const skinId = $('alSkinSelect') ? $('alSkinSelect').value : 'classic';
     const prefs = AlConfigStore.loadSkinPrefs();
     prefs.activeId = skinId;
     AlConfigStore.saveSkinPrefs(prefs);
+    savedSkinId = skinId;
+    goHome();
+  }
 
-    setSetupMsg('บันทึก Skin แล้ว', 'ok');
-    setSetupPanelOpen(false);
-    syncChrome();
-    remountSkin();
+  function onSkinSelectChange() {
+    const sel = $('alSkinSelect');
+    if (!sel || !setupOpen) return;
+    remountSkinPreview(sel.value);
   }
 
   function bindUi() {
     const form = $('alSetupForm');
     if (form) form.addEventListener('submit', onSetupSubmit);
 
+    const cancel = $('alSetupCancel');
+    if (cancel) cancel.addEventListener('click', onSetupCancel);
+
+    const sel = $('alSkinSelect');
+    if (sel) sel.addEventListener('change', onSkinSelectChange);
+
     const toggle = $('alSetupToggle');
     if (toggle) {
       toggle.addEventListener('click', function () {
         if (!isReady()) return;
-        setSetupPanelOpen(!setupOpen);
-        if (setupOpen) syncSkinSelect();
+        if (setupOpen) {
+          onSetupCancel();
+        } else {
+          openSetupPanel();
+        }
       });
     }
   }
@@ -137,15 +187,13 @@ const AlApp = (function () {
     bindUi();
     syncSkinSelect();
     AlWebhook.rebuildCache();
-    if (AlConfigStore.isSetupMode()) {
-      setupOpen = true;
-    }
-    syncChrome();
-    if (setupOpen) {
-      setSetupPanelOpen(true);
-      syncSkinSelect();
-    }
+    savedSkinId = currentSavedSkinId();
     remountSkin();
+    if (AlConfigStore.isSetupMode()) {
+      openSetupPanel();
+    } else {
+      syncChrome();
+    }
   }
 
   if (document.readyState === 'loading') {
