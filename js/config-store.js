@@ -153,47 +153,23 @@ const AlConfigStore = (function () {
     }
   }
 
-  function deployDefaults() {
-    try {
-      const d = window.AL_DEPLOY_CONFIG;
-      if (!d || typeof d !== 'object') return null;
-      const cfg = normalizeBlynk(d);
-      return AlConfigStore.isReady(cfg) ? cfg : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  /**
-   * ลำดับ: URL (deep link) → localStorage → deploy-config.js
-   * ถ้าได้ config ใหม่จาก URL/deploy จะบันทึกลง localStorage
-   */
+  /** อ่านเฉพาะ localStorage — ไม่รับค่าจาก URL (กันแชร์ลิงก์แล้วมี token) */
   function bootstrap() {
-    const urlResult = ingestUrlParams();
-    let cfg = normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
-
-    if (!isReady(cfg)) {
-      const dep = deployDefaults();
-      if (dep) {
-        cfg = dep;
-        saveBlynk(cfg);
-      }
-    } else if (urlResult.merged) {
-      cfg = loadBlynk();
-    }
-
-    return {
-      ready: isReady(cfg),
-      fromUrl: urlResult.merged,
-      cfg: cfg
-    };
+    const cfg = loadBlynk();
+    return { ready: isReady(cfg), cfg: cfg };
   }
 
   function loadBlynk() {
-    const stored = normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
-    if (isReady(stored)) return stored;
-    const dep = deployDefaults();
-    return dep || stored;
+    return normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
+  }
+
+  function clearBlynk() {
+    try {
+      localStorage.removeItem(AL_BLYNK_KEY);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   function saveBlynk(cfg) {
@@ -254,7 +230,7 @@ const AlConfigStore = (function () {
     maskToken,
     ingestUrlParams,
     bootstrap,
-    deployDefaults,
+    clearBlynk,
     isSetupMode,
     exportBundle,
     importBundle,

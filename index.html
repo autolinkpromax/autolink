@@ -15,16 +15,12 @@
     <header class="al-topbar">
       <h1 class="al-title">AutoLink</h1>
       <p class="al-subtitle" id="alReadyHint">กำลังโหลด…</p>
-      <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="ตั้งค่า (ผู้ดูแล)" hidden>⚙</button>
+      <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="แก้การตั้งค่า" hidden>⚙</button>
     </header>
 
-    <div id="alPairing" class="al-pairing" hidden>
-      <p class="al-pairing-title">ยังไม่ได้เชื่อมเครื่อง</p>
-      <p class="al-pairing-body">เปิดจาก <strong>AutoDoor-RF2</strong> ครั้งแรก: ตั้งค่า → Blynk IoT → <strong>เปิด AutoLink</strong> — ครั้งถัดไปบนเครื่องนี้กดปุ่มได้เลยโดยไม่ต้องตั้งค่า</p>
-    </div>
-
-    <aside id="alSetup" class="al-setup" hidden>
-      <h2 class="al-setup-title">ตั้งค่า Blynk</h2>
+    <aside id="alSetup" class="al-setup">
+      <h2 class="al-setup-title">ตั้งค่า Webhook (ครั้งเดียว)</h2>
+      <p class="al-setup-intro" id="alSetupIntro">กรอกแล้วกดบันทึก — เก็บในเครื่องนี้เท่านั้น คนอื่นที่มีแค่ลิงก์สั่งงานไม่ได้</p>
       <form id="alSetupForm" class="al-setup-form" autocomplete="off">
         <label class="al-field">
           <span>โฮสต์ Blynk</span>
@@ -63,6 +59,7 @@
             นำเข้า JSON
             <input type="file" id="alImportConfig" accept="application/json,.json" hidden />
           </label>
+          <button type="button" class="al-btn al-btn--sec al-btn--sm" id="alClearConfig" hidden>ลบการตั้งค่าในเครื่อง</button>
         </div>
         <p class="al-setup-msg" id="alSetupMsg" role="status"></p>
       </form>
@@ -71,7 +68,6 @@
     <main id="alSkinHost" class="al-skin-host" data-al-skin-active="classic"></main>
   </div>
 
-  <script src="js/deploy-config.js"></script>
   <script src="js/skins-registry.js"></script>
   <script src="js/config-store.js"></script>
   <script src="js/webhook.js"></script>
