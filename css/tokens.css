@@ -1,0 +1,25 @@
+:root {
+  --al-bg: #0f172a;
+  --al-surface: #1e293b;
+  --al-surface-2: #334155;
+  --al-text: #f1f5f9;
+  --al-muted: #94a3b8;
+  --al-line: #475569;
+  --al-radius: 16px;
+  --al-radius-sm: 10px;
+  --al-font: system-ui, "Segoe UI", "Noto Sans Thai", sans-serif;
+  --al-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+  --al-safe-top: env(safe-area-inset-top, 0px);
+  --al-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --al-hero-bg: #0c1222;
+  --al-hero-max-width: 320px;
+  --al-hero-height: 96px;
+  --al-act-open-bg: linear-gradient(180deg, #4d8ee8, #3a6fc9);
+  --al-act-stop-bg: linear-gradient(180deg, #d94a58, #b83240);
+  --al-act-close-bg: linear-gradient(180deg, #64748b, #475569);
+  --al-act-open-color: #fff;
+  --al-act-stop-color: #fff;
+  --al-act-close-color: #fff;
+  --al-gap: 12px;
+  --al-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}

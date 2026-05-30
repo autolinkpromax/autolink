@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "row3",
+  "name": "แถว 3 ปุ่ม",
+  "layout": { "mode": "stack", "order": ["hero", "actions", "feedback"] },
+  "regions": {
+    "hero": { "type": "gateBars", "showStatusLabel": true, "statusLabel": "สถานะ" },
+    "actions": {
+      "placement": { "mode": "row" },
+      "order": ["open", "stop", "close"],
+      "buttons": {
+        "open": { "label": "เปิด", "iconLead": "🚪", "variant": "open" },
+        "stop": { "label": "หยุด", "iconLead": "✋", "variant": "stop" },
+        "close": { "label": "ปิด", "iconLead": "🚪", "variant": "close" }
+      }
+    },
+    "feedback": { "visible": true }
+  },
+  "tokens": {
+    "--al-hero-max-width": "100%",
+    "--al-act-open-bg": "linear-gradient(180deg,#22c55e,#16a34a)",
+    "--al-act-stop-bg": "linear-gradient(180deg,#f59e0b,#d97706)",
+    "--al-act-close-bg": "linear-gradient(180deg,#64748b,#334155)"
+  }
+}

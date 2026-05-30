@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autodoor.local/autolink-skin/v1",
+  "title": "AutoLinkSkinManifestV1",
+  "type": "object",
+  "required": ["schema", "id", "name", "layout", "regions"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,31}$" },
+    "name": { "type": "string", "maxLength": 64 },
+    "layout": {
+      "type": "object",
+      "required": ["mode", "order"],
+      "properties": {
+        "mode": { "enum": ["stack", "grid"] },
+        "order": {
+          "type": "array",
+          "items": { "enum": ["hero", "actions", "feedback"] },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "grid": {
+          "type": "object",
+          "properties": {
+            "columns": { "type": "string" },
+            "rows": { "type": "string" },
+            "areas": { "type": "string" }
+          }
+        }
+      }
+    },
+    "regions": {
+      "type": "object",
+      "properties": {
+        "hero": {
+          "type": "object",
+          "properties": {
+            "type": { "enum": ["gateBars", "gateCss"] },
+            "showStatusLabel": { "type": "boolean" },
+            "statusLabel": { "type": "string", "maxLength": 80 }
+          }
+        },
+        "actions": {
+          "type": "object",
+          "properties": {
+            "placement": {
+              "type": "object",
+              "properties": {
+                "mode": { "enum": ["stack", "row", "grid", "magic", "absolute"] },
+                "columns": { "type": "string" },
+                "slots": { "type": "object" }
+              }
+            },
+            "order": {
+              "type": "array",
+              "items": { "enum": ["open", "stop", "close"] }
+            },
+            "buttons": { "type": "object" }
+          }
+        },
+        "feedback": {
+          "type": "object",
+          "properties": { "visible": { "type": "boolean" } }
+        }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "maxLength": 256 }
+    }
+  }
+}

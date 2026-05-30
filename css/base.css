@@ -1,0 +1,255 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--al-font);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--al-text);
+  background: var(--al-bg);
+  padding: var(--al-safe-top) 0 var(--al-safe-bottom);
+}
+
+.mono {
+  font-family: var(--al-mono);
+  font-size: 0.9em;
+}
+
+.al-app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px 16px 24px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.al-topbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 4px 12px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.al-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  grid-column: 1;
+}
+
+.al-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--al-muted);
+  grid-column: 1;
+}
+
+.al-setup-toggle {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--al-line);
+  border-radius: 12px;
+  background: var(--al-surface);
+  color: var(--al-text);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.al-setup-toggle[aria-expanded="true"] {
+  border-color: #3b82f6;
+  background: #1e3a5f;
+}
+
+.al-setup {
+  background: var(--al-surface);
+  border: 1px solid var(--al-line);
+  border-radius: var(--al-radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--al-shadow);
+}
+
+.al-setup[hidden] {
+  display: none;
+}
+
+.al-setup-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+.al-setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.al-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--al-muted);
+}
+
+.al-field input,
+.al-field select {
+  padding: 10px 12px;
+  border: 1px solid var(--al-line);
+  border-radius: var(--al-radius-sm);
+  background: var(--al-bg);
+  color: var(--al-text);
+  font-size: 1rem;
+}
+
+.al-pin-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.al-field--pin input {
+  text-align: center;
+}
+
+.al-hint {
+  font-size: 0.75rem;
+  color: var(--al-muted);
+}
+
+.al-setup-actions,
+.al-setup-io {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.al-setup-msg {
+  margin: 0;
+  font-size: 0.85rem;
+  min-height: 1.2em;
+}
+
+.al-setup-msg.ok { color: #34d399; }
+.al-setup-msg.err { color: #f87171; }
+
+.al-skin-host {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-gap);
+}
+
+.al-region {
+  width: 100%;
+}
+
+.al-region--hero {
+  text-align: center;
+}
+
+.al-status-label {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  color: var(--al-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.al-status-text {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  color: var(--al-text);
+}
+
+.al-region--feedback {
+  text-align: center;
+}
+
+.al-feedback {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--al-muted);
+  min-height: 1.3em;
+}
+
+.al-feedback.ok { color: #34d399; }
+.al-feedback.err { color: #f87171; }
+
+.al-layout-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-gap);
+}
+
+.al-layout-grid {
+  display: grid;
+  gap: var(--al-gap);
+}
+
+.al-actions-host {
+  position: relative;
+  width: 100%;
+}
+
+.al-actions-host[data-placement="stack"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-gap);
+}
+
+.al-actions-host[data-placement="row"] {
+  display: flex;
+  flex-direction: row;
+  gap: var(--al-gap);
+}
+
+.al-actions-host[data-placement="row"] .al-act-btn {
+  flex: 1;
+  min-width: 0;
+}
+
+.al-actions-host[data-placement="grid"] {
+  display: grid;
+  gap: var(--al-gap);
+}
+
+.al-actions-host[data-placement="magic"] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--al-gap);
+}
+
+.al-actions-host[data-placement="magic"] .al-act-btn[data-al-action="open"] {
+  grid-column: 1 / -1;
+}
+
+.al-actions-host[data-placement="absolute"] {
+  min-height: 200px;
+}
+
+.al-actions-host[data-placement="absolute"] .al-act-btn {
+  position: absolute;
+}
+
+.al-import-label {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

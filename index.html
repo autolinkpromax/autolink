@@ -1,9 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-    <title>My First Website</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>AutoLink — ควบคุมประตู Blynk</title>
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/gate.css" />
+  <link rel="stylesheet" href="css/components.css" />
 </head>
 <body>
-    <h1>ยินดีด้วย! หน้าเว็บของคุณใช้งานได้แล้ว</h1>
+  <div id="alApp" class="al-app">
+    <header class="al-topbar">
+      <h1 class="al-title">AutoLink</h1>
+      <p class="al-subtitle" id="alReadyHint">กำลังโหลด…</p>
+      <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="ตั้งค่า">⚙</button>
+    </header>
+
+    <aside id="alSetup" class="al-setup" hidden>
+      <h2 class="al-setup-title">ตั้งค่า Blynk</h2>
+      <form id="alSetupForm" class="al-setup-form" autocomplete="off">
+        <label class="al-field">
+          <span>โฮสต์ Blynk</span>
+          <input type="text" id="alHost" name="host" placeholder="sgp1.blynk.cloud" spellcheck="false" />
+        </label>
+        <label class="al-field">
+          <span>Auth Token</span>
+          <input type="password" id="alToken" name="token" class="mono" spellcheck="false" placeholder="รหัสจาก Device" />
+          <small class="al-hint" id="alTokenMask"></small>
+        </label>
+        <div class="al-pin-row">
+          <label class="al-field al-field--pin">
+            <span>V เปิด</span>
+            <input type="number" id="alVOpen" name="vOpen" min="0" max="255" />
+          </label>
+          <label class="al-field al-field--pin">
+            <span>V หยุด</span>
+            <input type="number" id="alVStop" name="vStop" min="0" max="255" />
+          </label>
+          <label class="al-field al-field--pin">
+            <span>V ปิด</span>
+            <input type="number" id="alVClose" name="vClose" min="0" max="255" />
+          </label>
+        </div>
+        <label class="al-field">
+          <span>Skin</span>
+          <select id="alSkinSelect" name="skin"></select>
+        </label>
+        <div class="al-setup-actions">
+          <button type="submit" class="al-btn al-btn--primary">บันทึก</button>
+          <button type="button" class="al-btn al-btn--sec" id="alTestWebhook">ทดสอบ (เปิด)</button>
+        </div>
+        <div class="al-setup-io">
+          <button type="button" class="al-btn al-btn--sec al-btn--sm" id="alExportConfig">ส่งออก JSON</button>
+          <label class="al-btn al-btn--sec al-btn--sm al-import-label">
+            นำเข้า JSON
+            <input type="file" id="alImportConfig" accept="application/json,.json" hidden />
+          </label>
+        </div>
+        <p class="al-setup-msg" id="alSetupMsg" role="status"></p>
+      </form>
+    </aside>
+
+    <main id="alSkinHost" class="al-skin-host" data-al-skin-active="classic"></main>
+  </div>
+
+  <script src="js/skins-registry.js"></script>
+  <script src="js/config-store.js"></script>
+  <script src="js/webhook.js"></script>
+  <script src="js/gate-controller.js"></script>
+  <script src="js/skin-engine.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

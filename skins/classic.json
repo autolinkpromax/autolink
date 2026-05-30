@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "classic",
+  "name": "คลาสสิก",
+  "layout": { "mode": "stack", "order": ["hero", "actions", "feedback"] },
+  "regions": {
+    "hero": { "type": "gateBars", "showStatusLabel": true, "statusLabel": "สถานะปัจจุบัน" },
+    "actions": {
+      "placement": { "mode": "stack" },
+      "order": ["open", "stop", "close"],
+      "buttons": {
+        "open": { "label": "เปิดประตู", "iconLead": "🚪", "iconTrail": "›", "variant": "open" },
+        "stop": { "label": "หยุด", "iconLead": "✋", "iconTrail": "⚠", "variant": "stop" },
+        "close": { "label": "ปิดประตู", "iconLead": "🚪", "iconTrail": "›", "variant": "close" }
+      }
+    },
+    "feedback": { "visible": true }
+  },
+  "tokens": {
+    "--al-act-open-bg": "linear-gradient(180deg,#4d8ee8,#3a6fc9)",
+    "--al-act-stop-bg": "linear-gradient(180deg,#d94a58,#b83240)",
+    "--al-act-close-bg": "linear-gradient(180deg,#64748b,#475569)"
+  }
+}

@@ -1,0 +1,74 @@
+.al-act-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 18px;
+  border: none;
+  border-radius: var(--al-radius-sm);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.2s, filter 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.al-act-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.al-act-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.al-act-btn--open {
+  background: var(--al-act-open-bg);
+  color: var(--al-act-open-color, #fff);
+}
+
+.al-act-btn--stop {
+  background: var(--al-act-stop-bg);
+  color: var(--al-act-stop-color, #fff);
+}
+
+.al-act-btn--close {
+  background: var(--al-act-close-bg);
+  color: var(--al-act-close-color, #fff);
+}
+
+.al-act-btn__lead,
+.al-act-btn__trail {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.al-btn {
+  padding: 10px 16px;
+  border-radius: var(--al-radius-sm);
+  border: 1px solid var(--al-line);
+  background: var(--al-surface-2);
+  color: var(--al-text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.al-btn--primary {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.al-btn--sec {
+  background: var(--al-surface);
+}
+
+.al-btn--sm {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+}

@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "magic",
+  "name": "เปิดเต็มแถว",
+  "layout": { "mode": "stack", "order": ["hero", "actions", "feedback"] },
+  "regions": {
+    "hero": { "type": "gateBars", "showStatusLabel": false },
+    "actions": {
+      "placement": { "mode": "magic" },
+      "order": ["open", "stop", "close"],
+      "buttons": {
+        "open": { "label": "เปิดประตู", "iconLead": "✨", "iconTrail": "🚪", "variant": "open" },
+        "stop": { "label": "หยุด", "iconLead": "✋", "variant": "stop" },
+        "close": { "label": "ปิดประตู", "iconLead": "🚪", "variant": "close" }
+      }
+    },
+    "feedback": { "visible": true }
+  },
+  "tokens": {
+    "--al-act-open-bg": "linear-gradient(135deg,#6366f1,#8b5cf6)",
+    "--al-act-stop-bg": "linear-gradient(180deg,#f43f5e,#e11d48)",
+    "--al-act-close-bg": "linear-gradient(180deg,#475569,#1e293b)",
+    "--al-hero-bg": "#1a1033"
+  }
+}
