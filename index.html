@@ -15,8 +15,13 @@
     <header class="al-topbar">
       <h1 class="al-title">AutoLink</h1>
       <p class="al-subtitle" id="alReadyHint">กำลังโหลด…</p>
-      <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="ตั้งค่า">⚙</button>
+      <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="ตั้งค่า (ผู้ดูแล)" hidden>⚙</button>
     </header>
+
+    <div id="alPairing" class="al-pairing" hidden>
+      <p class="al-pairing-title">ยังไม่ได้เชื่อมเครื่อง</p>
+      <p class="al-pairing-body">เปิดจาก <strong>AutoDoor-RF2</strong> ครั้งแรก: ตั้งค่า → Blynk IoT → <strong>เปิด AutoLink</strong> — ครั้งถัดไปบนเครื่องนี้กดปุ่มได้เลยโดยไม่ต้องตั้งค่า</p>
+    </div>
 
     <aside id="alSetup" class="al-setup" hidden>
       <h2 class="al-setup-title">ตั้งค่า Blynk</h2>
@@ -66,6 +71,7 @@
     <main id="alSkinHost" class="al-skin-host" data-al-skin-active="classic"></main>
   </div>
 
+  <script src="js/deploy-config.js"></script>
   <script src="js/skins-registry.js"></script>
   <script src="js/config-store.js"></script>
   <script src="js/webhook.js"></script>

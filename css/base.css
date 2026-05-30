@@ -253,3 +253,36 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.al-pairing {
+  background: var(--al-surface);
+  border: 1px solid var(--al-line);
+  border-radius: var(--al-radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.al-pairing[hidden] {
+  display: none;
+}
+
+.al-pairing-title {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.al-pairing-body {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--al-muted);
+  line-height: 1.5;
+}
+
+.al-app.al-ready .al-setup-toggle {
+  display: none;
+}
+
+.al-app.al-admin .al-setup-toggle {
+  display: block;
+}

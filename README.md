@@ -1,12 +1,21 @@
 # AutoLink — ควบคุมประตูผ่าน Blynk Webhook
 
-หน้าเว็บสแตติก (HTML / CSS / JS) สำหรับกด **เปิด · หยุด · ปิด** ประตูผ่าน Blynk Cloud โดยไม่ต้องเปิดแอป Blynk — เก็บการตั้งค่าใน **localStorage** บนเครื่องผู้ใช้
+หน้าเว็บสแตติกสำหรับกด **เปิด · หยุด · ปิด** ผ่าน Blynk Cloud — **ไม่มีแผงตั้งค่าให้ผู้ใช้ทั่วไป** ระบบสร้าง webhook ให้แต่ละปุ่มอัตโนมัติ
 
-## วิธีเปิด
+โฮสต์สาธารณะ: [https://autolinkpromax.github.io/autolink/index.html](https://autolinkpromax.github.io/autolink/index.html)
 
-- เปิด `index.html` ผ่านเว็บเซิร์ฟเวอร์ (แนะนำ) เช่น `npx serve .` ในโฟลเดอร์นี้
-- หรือโฮสต์บน GitHub Pages / ไฟล์ในเครือข่าย
-- การเปิดแบบ `file://` อาจส่ง webhook ไม่ได้ในบางเบราว์เซอร์ — ใช้ localhost แทน
+## การใช้งาน (ผู้ใช้ทั่วไป)
+
+1. **ครั้งแรกบนมือถือ/คอมเครื่องนี้:** จาก WebUI เครื่อง AutoDoor-RF2 → ตั้งค่า → Blynk IoT → **เปิด AutoLink** (ส่ง Token + V pin ทาง URL แล้วบันทึกลง localStorage)
+2. **ครั้งถัดไป:** เปิด [index.html](https://autolinkpromax.github.io/autolink/index.html) ตรงๆ → เห็นแค่ 3 ปุ่ม + ประตู → กดสั่งได้ทันที
+
+ไม่ต้องกรอกอะไรบนหน้าเว็บ — ไม่มีปุ่ม ⚙ ยกเว้นโหมดผู้ดูแล (`?setup=1`)
+
+## วิธี deploy GitHub Pages
+
+1. อัปโหลดทั้งโฟลเดอร์ `autolink` ขึ้น repo `autolinkpromax.github.io` (path `/autolink/`)
+2. **ทางเลือก A — Token ในเว็บ (ไม่ต้องเปิดจาก ESP):** แก้ [`js/deploy-config.js`](js/deploy-config.js) ใส่ `token` แล้ว push (Token จะเห็นใน repo สาธารณะ)
+3. **ทางเลือก B — ปลอดภัยกว่า:** ปล่อย `token` ว่างใน `deploy-config.js` ให้ผู้ใช้เปิดจาก ESP ครั้งแรกเท่านั้น
 
 ## Deep link (กรอกอัตโนมัติ)
 
@@ -23,7 +32,7 @@ index.html?host=sgp1.blynk.cloud&token=YOUR_TOKEN&vOpen=0&vStop=1&vClose=2&skin=
 | `vOpen`, `vStop`, `vClose` | หมายเลข Virtual Pin |
 | `skin` | `classic`, `row3`, `magic` |
 
-จาก WebUI เครื่อง AutoDoor-RF2: **ตั้งค่า → Blynk IoT → เปิด AutoLink** (สร้างลิงก์อัตโนมัติ)
+จาก WebUI เครื่อง AutoDoor-RF2: **ตั้งค่า → Blynk IoT → เปิด AutoLink** (ลิงก์ไป `autolinkpromax.github.io` พร้อม query)
 
 ## รูปแบบ Webhook
 
@@ -66,11 +75,15 @@ https://{host}/external/api/update?token={token}&V{pin}=1
 - ไม่มี CORS อ่านสถานะ V3 จาก cloud — เอนิเมชันประตูสะท้อนการกด (optimistic UI)
 - ไม่ฝังใน firmware ในเวอร์ชันนี้ — อัปเดตเฟิร์มแวร์ไม่จำเป็นสำหรับ AutoLink อย่างเดียว
 
+## โหมดผู้ดูแล
+
+เปิด `index.html?setup=1` เพื่อแก้ host / token / pin / skin ด้วยมือ
+
 ## โครงไฟล์
 
 ```
 index.html
 css/   tokens, base, gate, components
-js/    app, config-store, webhook, gate-controller, skin-engine, skins-registry
+js/    deploy-config.js, app, config-store, webhook, gate-controller, skin-engine, skins-registry
 skins/ schema + ตัวอย่าง JSON
 ```

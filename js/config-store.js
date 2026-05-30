@@ -4,6 +4,7 @@
 const AL_BLYNK_KEY = 'autolink.blynk.v1';
 const AL_SKIN_KEY = 'autolink.skin.v1';
 const AL_DEFAULT_HOST = 'sgp1.blynk.cloud';
+const AL_PUBLIC_PAGE = 'https://autolinkpromax.github.io/autolink';
 
 const AlConfigStore = (function () {
   function defaultBlynk() {
@@ -152,8 +153,47 @@ const AlConfigStore = (function () {
     }
   }
 
+  function deployDefaults() {
+    try {
+      const d = window.AL_DEPLOY_CONFIG;
+      if (!d || typeof d !== 'object') return null;
+      const cfg = normalizeBlynk(d);
+      return AlConfigStore.isReady(cfg) ? cfg : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /**
+   * ลำดับ: URL (deep link) → localStorage → deploy-config.js
+   * ถ้าได้ config ใหม่จาก URL/deploy จะบันทึกลง localStorage
+   */
+  function bootstrap() {
+    const urlResult = ingestUrlParams();
+    let cfg = normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
+
+    if (!isReady(cfg)) {
+      const dep = deployDefaults();
+      if (dep) {
+        cfg = dep;
+        saveBlynk(cfg);
+      }
+    } else if (urlResult.merged) {
+      cfg = loadBlynk();
+    }
+
+    return {
+      ready: isReady(cfg),
+      fromUrl: urlResult.merged,
+      cfg: cfg
+    };
+  }
+
   function loadBlynk() {
-    return normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
+    const stored = normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
+    if (isReady(stored)) return stored;
+    const dep = deployDefaults();
+    return dep || stored;
   }
 
   function saveBlynk(cfg) {
@@ -194,8 +234,18 @@ const AlConfigStore = (function () {
     return { ok: true };
   }
 
+  function isSetupMode() {
+    try {
+      const p = new URLSearchParams(window.location.search);
+      return p.get('setup') === '1' || p.get('admin') === '1';
+    } catch (_) {
+      return false;
+    }
+  }
+
   return {
     AL_DEFAULT_HOST,
+    AL_PUBLIC_PAGE,
     loadBlynk,
     saveBlynk,
     loadSkinPrefs,
@@ -203,6 +253,9 @@ const AlConfigStore = (function () {
     isReady,
     maskToken,
     ingestUrlParams,
+    bootstrap,
+    deployDefaults,
+    isSetupMode,
     exportBundle,
     importBundle,
     normalizeBlynk
