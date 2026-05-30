@@ -1,13 +1,11 @@
 const AlApp = (function () {
   const ERROR_TH = {
-    no_config: 'บันทึกการตั้งค่าก่อน',
+    no_config: 'ยังไม่พร้อม — เปิดจากเครื่อง AutoDoor-RF2',
     debounce: 'กรุณารอสักครู่',
     network: 'ส่งไม่สำเร็จ — ตรวจเครือข่าย',
     bad_action: 'คำสั่งไม่ถูกต้อง',
     bad_token: 'Token ต้องยาวอย่างน้อย 8 ตัวอักษร'
   };
-
-  let setupCollapsed = false;
 
   function $(id) {
     return document.getElementById(id);
@@ -28,47 +26,29 @@ const AlApp = (function () {
   function syncChrome() {
     const app = $('alApp');
     const ready = isReady();
-    const setup = $('alSetup');
-    const toggle = $('alSetupToggle');
-    const skinHost = $('alSkinHost');
-    const clearBtn = $('alClearConfig');
+    const admin = AlConfigStore.isSetupMode();
 
     if (app) app.classList.toggle('al-ready', ready);
 
     const hint = $('alReadyHint');
     if (hint) {
-      hint.textContent = ready ? 'พร้อมใช้งาน' : 'ตั้งค่าครั้งแรก (เก็บในเครื่องนี้)';
+      hint.textContent = ready ? 'พร้อมใช้งาน' : 'กำลังโหลด…';
     }
 
-    if (!ready) {
-      setupCollapsed = false;
-      if (setup) {
-        setup.hidden = false;
-        setup.classList.remove('al-setup--collapsed');
-      }
-      if (toggle) toggle.hidden = true;
-      if (skinHost) skinHost.hidden = true;
-      if (clearBtn) clearBtn.hidden = true;
-      return;
-    }
+    const need = $('alNeedConfig');
+    if (need) need.hidden = ready || admin;
 
-    if (toggle) toggle.hidden = false;
-    if (clearBtn) clearBtn.hidden = false;
-    if (skinHost) skinHost.hidden = false;
+    const setup = $('alSetup');
+    if (setup) setup.hidden = !admin;
 
-    if (setup) {
-      if (setupCollapsed) {
-        setup.classList.add('al-setup--collapsed');
-        setup.hidden = false;
-      } else {
-        setup.classList.remove('al-setup--collapsed');
-        setup.hidden = AlConfigStore.isSetupMode() ? false : true;
-      }
-    }
+    const toggle = $('alSetupToggle');
+    if (toggle) toggle.hidden = !ready && !admin;
 
-    if (toggle) {
-      toggle.setAttribute('aria-expanded', setup && !setup.hidden && !setupCollapsed ? 'true' : 'false');
-    }
+    const skinHost = $('alSkinHost');
+    if (skinHost) skinHost.hidden = !ready;
+
+    const clearBtn = $('alClearConfig');
+    if (clearBtn) clearBtn.hidden = !admin;
   }
 
   function syncSetupForm() {
@@ -76,10 +56,7 @@ const AlApp = (function () {
     const prefs = AlConfigStore.loadSkinPrefs();
 
     if ($('alHost')) $('alHost').value = cfg.host;
-    if ($('alToken')) {
-      $('alToken').value = cfg.token;
-      $('alToken').placeholder = cfg.token ? '••••••••' : 'รหัสจาก Device บน blynk.cloud';
-    }
+    if ($('alToken')) $('alToken').value = cfg.token;
     if ($('alVOpen')) $('alVOpen').value = String(cfg.pins.open);
     if ($('alVStop')) $('alVStop').value = String(cfg.pins.stop);
     if ($('alVClose')) $('alVClose').value = String(cfg.pins.close);
@@ -87,8 +64,8 @@ const AlApp = (function () {
     const mask = $('alTokenMask');
     if (mask) {
       mask.textContent = cfg.token
-        ? 'บันทึกในเครื่องนี้แล้ว ' + AlConfigStore.maskToken(cfg.token)
-        : 'ยังไม่ได้บันทึกในเครื่องนี้';
+        ? AlConfigStore.maskToken(cfg.token)
+        : '';
     }
 
     const sel = $('alSkinSelect');
@@ -102,27 +79,10 @@ const AlApp = (function () {
       });
       const customOpt = document.createElement('option');
       customOpt.value = 'custom';
-      customOpt.textContent = 'กำหนดเอง (นำเข้า JSON)';
+      customOpt.textContent = 'กำหนดเอง';
       sel.appendChild(customOpt);
       sel.value = prefs.activeId === 'custom' ? 'custom' : (prefs.activeId || 'classic');
     }
-  }
-
-  function setSetupOpen(open) {
-    const panel = $('alSetup');
-    const toggle = $('alSetupToggle');
-    if (!panel) return;
-
-    if (!isReady()) {
-      panel.hidden = false;
-      panel.classList.remove('al-setup--collapsed');
-      setupCollapsed = false;
-      if (toggle) toggle.setAttribute('aria-expanded', 'true');
-      return;
-    }
-
-    setupCollapsed = !open;
-    syncChrome();
   }
 
   function remountSkin() {
@@ -135,10 +95,7 @@ const AlApp = (function () {
   }
 
   async function handleAction(action) {
-    if (!isReady()) {
-      syncChrome();
-      return;
-    }
+    if (!isReady()) return;
 
     AlGateController.setButtonsDisabled(true);
     AlGateController.setFeedback('กำลังส่ง…', null);
@@ -179,29 +136,21 @@ const AlApp = (function () {
       return;
     }
 
-    if (!AlConfigStore.saveBlynk(cfg)) {
-      setSetupMsg('บันทึกไม่สำเร็จ', 'err');
-      return;
-    }
-
+    AlConfigStore.saveBlynk(cfg);
     const skinId = $('alSkinSelect') ? $('alSkinSelect').value : 'classic';
     const prefs = AlConfigStore.loadSkinPrefs();
     prefs.activeId = skinId;
     AlConfigStore.saveSkinPrefs(prefs);
 
-    setSetupMsg('บันทึกแล้ว — กดปุ่มด้านล่างได้เลย', 'ok');
+    setSetupMsg('บันทึกแล้ว', 'ok');
     AlWebhook.rebuildCache();
-    setupCollapsed = true;
     syncChrome();
     remountSkin();
   }
 
   function onClearConfig() {
-    if (!confirm('ลบ Token และ Webhook ที่เก็บในเครื่องนี้?')) return;
+    if (!confirm('ลบการตั้งค่าในเครื่องนี้?')) return;
     AlConfigStore.clearBlynk();
-    if ($('alToken')) $('alToken').value = '';
-    setupCollapsed = false;
-    setSetupMsg('ลบแล้ว', 'ok');
     AlWebhook.rebuildCache();
     syncSetupForm();
     syncChrome();
@@ -229,19 +178,8 @@ const AlApp = (function () {
           setSetupMsg('ไฟล์ไม่ถูกต้อง', 'err');
           return;
         }
-        if (data.skin && data.skin.customManifest) {
-          const v = AlSkinsRegistry.validateManifest(data.skin.customManifest);
-          if (v.ok) {
-            const prefs = AlConfigStore.loadSkinPrefs();
-            prefs.activeId = 'custom';
-            prefs.customManifest = data.skin.customManifest;
-            prefs.customCss = data.skin.customCss || '';
-            AlConfigStore.saveSkinPrefs(prefs);
-          }
-        }
         syncSetupForm();
         AlWebhook.rebuildCache();
-        setupCollapsed = AlConfigStore.isReady(AlConfigStore.loadBlynk());
         syncChrome();
         remountSkin();
         setSetupMsg('นำเข้าแล้ว', 'ok');
@@ -259,8 +197,9 @@ const AlApp = (function () {
     const toggle = $('alSetupToggle');
     if (toggle) {
       toggle.addEventListener('click', function () {
-        if (!isReady()) return;
-        setSetupOpen(setupCollapsed);
+        window.location.search = '?setup=1';
+        syncChrome();
+        syncSetupForm();
       });
     }
 
@@ -283,14 +222,12 @@ const AlApp = (function () {
         AlConfigStore.saveBlynk(cfg);
         AlWebhook.rebuildCache();
         AlWebhook.trigger('open').then(function (res) {
-          setSetupMsg(res.ok ? 'ทดสอบส่งเปิดแล้ว' : (ERROR_TH[res.error] || 'ล้มเหลว'), res.ok ? 'ok' : 'err');
+          setSetupMsg(res.ok ? 'ทดสอบแล้ว' : (ERROR_TH[res.error] || 'ล้มเหลว'), res.ok ? 'ok' : 'err');
         });
       });
     }
 
-    const exp = $('alExportConfig');
-    if (exp) exp.addEventListener('click', onExport);
-
+    $('alExportConfig') && $('alExportConfig').addEventListener('click', onExport);
     const imp = $('alImportConfig');
     if (imp) {
       imp.addEventListener('change', function () {
@@ -298,9 +235,7 @@ const AlApp = (function () {
         imp.value = '';
       });
     }
-
-    const clr = $('alClearConfig');
-    if (clr) clr.addEventListener('click', onClearConfig);
+    $('alClearConfig') && $('alClearConfig').addEventListener('click', onClearConfig);
   }
 
   function init() {
@@ -308,7 +243,6 @@ const AlApp = (function () {
     bindUi();
     syncSetupForm();
     AlWebhook.rebuildCache();
-    if (isReady()) setupCollapsed = true;
     syncChrome();
     remountSkin();
   }
@@ -319,10 +253,5 @@ const AlApp = (function () {
     init();
   }
 
-  return {
-    handleAction,
-    remountSkin,
-    setSetupOpen,
-    syncChrome
-  };
+  return { handleAction, remountSkin, syncChrome };
 })();

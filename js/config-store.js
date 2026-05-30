@@ -153,10 +153,46 @@ const AlConfigStore = (function () {
     }
   }
 
-  /** อ่านเฉพาะ localStorage — ไม่รับค่าจาก URL (กันแชร์ลิงก์แล้วมี token) */
+  function applyDeployConfig() {
+    try {
+      const d = window.AL_DEPLOY_CONFIG;
+      if (!d || typeof d !== 'object') return false;
+      const cfg = normalizeBlynk(d);
+      if (!isReady(cfg)) return false;
+      saveBlynk(cfg);
+      if (d.skin) {
+        const skin = loadSkinPrefs();
+        skin.activeId = String(d.skin).trim() || skin.activeId;
+        saveSkinPrefs(skin);
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /**
+   * โหลดอัตโนมัติ: localStorage → URL (จาก ESP) → deploy-config.js
+   * ไม่แสดงฟอร์ม — บันทึกลงเครื่องแล้วพร้อมกดปุ่ม
+   */
   function bootstrap() {
-    const cfg = loadBlynk();
-    return { ready: isReady(cfg), cfg: cfg };
+    let cfg = loadBlynk();
+
+    if (!isReady(cfg)) {
+      ingestUrlParams();
+      cfg = loadBlynk();
+    }
+
+    if (!isReady(cfg)) {
+      applyDeployConfig();
+      cfg = loadBlynk();
+    }
+
+    return {
+      ready: isReady(cfg),
+      cfg: cfg,
+      source: isReady(cfg) ? 'ok' : 'missing'
+    };
   }
 
   function loadBlynk() {
@@ -230,6 +266,7 @@ const AlConfigStore = (function () {
     maskToken,
     ingestUrlParams,
     bootstrap,
+    applyDeployConfig,
     clearBlynk,
     isSetupMode,
     exportBundle,

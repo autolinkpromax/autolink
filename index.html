@@ -18,9 +18,13 @@
       <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="แก้การตั้งค่า" hidden>⚙</button>
     </header>
 
-    <aside id="alSetup" class="al-setup">
-      <h2 class="al-setup-title">ตั้งค่า Webhook (ครั้งเดียว)</h2>
-      <p class="al-setup-intro" id="alSetupIntro">กรอกแล้วกดบันทึก — เก็บในเครื่องนี้เท่านั้น คนอื่นที่มีแค่ลิงก์สั่งงานไม่ได้</p>
+    <div id="alNeedConfig" class="al-need-config" hidden>
+      <p>ยังไม่พร้อม — เปิดจากเครื่อง <strong>AutoDoor-RF2</strong> (ตั้งค่า → Blynk → เปิด AutoLink) หรือใส่ Token ใน <code>js/deploy-config.js</code> ก่อนอัปโหลด GitHub</p>
+    </div>
+
+    <aside id="alSetup" class="al-setup" hidden>
+      <h2 class="al-setup-title">ตั้งค่า (ผู้ดูแล)</h2>
+      <p class="al-setup-intro" id="alSetupIntro">โหมด ?setup=1</p>
       <form id="alSetupForm" class="al-setup-form" autocomplete="off">
         <label class="al-field">
           <span>โฮสต์ Blynk</span>
@@ -68,6 +72,7 @@
     <main id="alSkinHost" class="al-skin-host" data-al-skin-active="classic"></main>
   </div>
 
+  <script src="js/deploy-config.js"></script>
   <script src="js/skins-registry.js"></script>
   <script src="js/config-store.js"></script>
   <script src="js/webhook.js"></script>

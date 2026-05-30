@@ -1,32 +1,34 @@
-# AutoLink — ควบคุมประตูผ่าน Blynk Webhook
+# AutoLink
 
-หน้าเว็บสำหรับกด **เปิด · หยุด · ปิด** ผ่าน Blynk Cloud
+[https://autolinkpromax.github.io/autolink/index.html](https://autolinkpromax.github.io/autolink/index.html)
 
-โฮสต์: [https://autolinkpromax.github.io/autolink/index.html](https://autolinkpromax.github.io/autolink/index.html)
+เปิดหน้าแล้ว **กดปุ่มได้เลย** — ไม่มีฟอร์มให้กรอก
 
-## วิธีใช้
+## วิธีให้หน้าเว็บพร้อม (เลือกอย่างใดอย่างหนึ่ง)
 
-1. **ครั้งแรกบนเครื่องนี้:** เปิดลิงก์ → กรอกโฮสต์ Blynk, Auth Token, V pin → **บันทึก** (เก็บใน localStorage ของเบราว์เซอร์นี้เท่านั้น)
-2. **ครั้งถัดไป:** เปิดลิงก์เดิม → เห็นแค่ปุ่มควบคุม + ประตู → กดสั่งได้ทันที
+### A — ใส่ Token ในไฟล์ก่อนอัปโหลด GitHub (แนะนำถ้าไม่ใช้ ESP)
 
-## ความปลอดภัย
+แก้ [`js/deploy-config.js`](js/deploy-config.js):
 
-- **ไม่มี Token ในลิงก์** และไม่อ่านค่าจาก URL — แชร์ลิงก์ให้คนอื่นเปิดได้ แต่**สั่งงานไม่ได้**เพราะไม่มี webhook ในเครื่องเขา
-- Token อยู่แค่ใน localStorage ของเบราว์เซอร์ที่คุณบันทึก
-- กด ⚙ เพื่อแก้ค่า · **ลบการตั้งค่าในเครื่อง** เมื่อต้องการล้าง
-
-## Webhook (สร้างอัตโนมัติหลังบันทึก)
-
-```
-https://{host}/external/api/update?token={token}&V{pin}=1
+```javascript
+window.AL_DEPLOY_CONFIG = {
+  host: 'sgp1.blynk.cloud',
+  token: 'รหัสจาก blynk.cloud',
+  pins: { open: 0, stop: 1, close: 2 },
+  skin: 'classic'
+};
 ```
 
-ค่าเริ่มต้น: `sgp1.blynk.cloud` · V0 เปิด · V1 หยุด · V2 ปิด
+อัปโหลด GitHub Pages → ทุกคนที่เปิดลิงก์สั่งได้ (ใช้ repo ส่วนตัว)
 
-## Deploy GitHub Pages
+### B — เปิดจากเครื่อง AutoDoor-RF2 ครั้งแรก
 
-อัปโหลดทั้งโฟลเดอร์ `autolink` ขึ้น repo — **ไม่ต้อง**ใส่ Token ในไฟล์บน GitHub
+ตั้งค่า → Blynk IoT → **เปิด AutoLink** — ส่ง host/token/V pin อัตโนมัติ บันทึกในเครื่องนั้น
 
-## โหมดแอดมิน
+ครั้งหลังเปิด [index.html](https://autolinkpromax.github.io/autolink/index.html) ตรงๆ → ใช้ค่าที่บันทึกไว้ ไม่ต้องกรอก
 
-`index.html?setup=1` — แสดงแผงตั้งค่าแม้บันทึกแล้ว
+คนอื่นที่มีแค่ลิงก์ (ไม่เคยเปิดจาก ESP / ไม่มี deploy-config) → **สั่งไม่ได้**
+
+## โหมดผู้ดูแล
+
+`?setup=1` — แก้ค่าด้วยมือ
