@@ -101,8 +101,9 @@ const AL_SKIN_CYBERPUNK = {
     '--al-act-stop-color': '#f4f7ff',
     '--al-act-close-color': '#e8ecf4',
     '--al-hero-bg': '#12151e',
-    '--al-line': 'rgba(255,255,255,0.12)',
-    '--al-muted': 'rgba(180,198,220,0.85)'
+    '--al-line': 'rgba(0,245,255,0.35)',
+    '--al-muted': '#b8e8ff',
+    '--al-surface-2': '#2a2460'
   }
 };
 
