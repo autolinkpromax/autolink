@@ -94,10 +94,15 @@ const AL_SKIN_CYBERPUNK = {
     feedback: { visible: true }
   },
   tokens: {
-    '--al-act-open-bg': 'linear-gradient(135deg,#ff2a6d,#d10056)',
-    '--al-act-stop-bg': 'linear-gradient(135deg,#05d9e8,#0099aa)',
-    '--al-act-close-bg': 'linear-gradient(135deg,#1a1a2e,#0f0f1a)',
-    '--al-hero-bg': '#12001f'
+    '--al-act-open-bg': 'transparent',
+    '--al-act-stop-bg': 'transparent',
+    '--al-act-close-bg': 'transparent',
+    '--al-act-open-color': '#f4f7ff',
+    '--al-act-stop-color': '#f4f7ff',
+    '--al-act-close-color': '#e8ecf4',
+    '--al-hero-bg': '#12151e',
+    '--al-line': 'rgba(255,255,255,0.12)',
+    '--al-muted': 'rgba(180,198,220,0.85)'
   }
 };
 

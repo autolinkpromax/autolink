@@ -34,7 +34,7 @@ window.AL_DEPLOY_CONFIG = {
 | Skin | จุดเด่น |
 |------|---------|
 | คลาสสิก · แถว 3 ปุ่ม · เปิดเต็มแถว | ธีมเดิม |
-| Cyberpunk | นีออน · แถวปุ่ม · พื้นหลังสแกน |
+| Cyberpunk | Premium Industrial · โลหะ+แก้ว · Neural Gate |
 | Luxury | ทอง-ดำ · แนวตั้ง · shimmer |
 | Sci-Fi | กริด 3 คอลัมน์ · hologram |
 | Aviation | คอกพิต · เปิดเต็มแถว |
