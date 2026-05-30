@@ -1,0 +1,413 @@
+/* AutoLink theme skins — body[data-al-theme="id"] */
+
+body[data-al-theme="classic"],
+body[data-al-theme="row3"],
+body[data-al-theme="magic"] {
+  /* ใช้ tokens จาก manifest — ไม่ override พื้นหลัง */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-al-theme] *,
+  body[data-al-theme]::before,
+  body[data-al-theme]::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* —— Cyberpunk —— */
+body[data-al-theme="cyberpunk"] {
+  background: #0a0012;
+  color: #e0f7ff;
+}
+body[data-al-theme="cyberpunk"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.04) 3px),
+    radial-gradient(ellipse at 20% 0%, rgba(255, 0, 128, 0.15), transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(0, 255, 255, 0.12), transparent 45%);
+  animation: alCyberPulse 6s ease-in-out infinite alternate;
+}
+body[data-al-theme="cyberpunk"] .al-app { position: relative; z-index: 1; }
+body[data-al-theme="cyberpunk"] .al-title {
+  color: #ff2a6d;
+  text-shadow: 0 0 12px rgba(255, 42, 109, 0.8);
+  letter-spacing: 0.12em;
+}
+body[data-al-theme="cyberpunk"] .al-skin-host .gate-visual {
+  border-color: #05d9e8;
+  box-shadow: 0 0 20px rgba(5, 217, 232, 0.35), inset 0 0 12px rgba(255, 42, 109, 0.15);
+}
+body[data-al-theme="cyberpunk"] .al-act-btn {
+  border: 1px solid #05d9e8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  animation: alCyberBtnGlow 2.5s ease-in-out infinite alternate;
+}
+body[data-al-theme="cyberpunk"] .al-act-btn:active { transform: scale(0.96); }
+
+/* —— Luxury —— */
+body[data-al-theme="luxury"] {
+  background: linear-gradient(165deg, #1a1510 0%, #0d0b08 40%, #1f1a14 100%);
+  color: #f5ecd7;
+  font-family: Georgia, "Noto Serif Thai", serif;
+}
+body[data-al-theme="luxury"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.12), transparent 55%);
+  animation: alLuxShimmer 10s ease-in-out infinite;
+}
+body[data-al-theme="luxury"] .al-app { position: relative; z-index: 1; }
+body[data-al-theme="luxury"] .al-title { color: #d4af37; font-weight: 400; letter-spacing: 0.2em; }
+body[data-al-theme="luxury"] .al-skin-host .gate-visual {
+  border-color: #d4af37;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+body[data-al-theme="luxury"] .al-act-btn {
+  border-radius: 4px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+body[data-al-theme="luxury"] .al-act-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.25);
+}
+
+/* —— Sci-Fi —— */
+body[data-al-theme="scifi"] {
+  background: #030818;
+  color: #b8e4ff;
+}
+body[data-al-theme="scifi"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  animation: alSciPan 20s linear infinite;
+}
+body[data-al-theme="scifi"] .al-app { position: relative; z-index: 1; }
+body[data-al-theme="scifi"] .al-title {
+  font-family: var(--al-mono);
+  color: #38bdf8;
+  text-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+}
+body[data-al-theme="scifi"] .al-skin-host .gate-visual {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  border-color: #0ea5e9;
+}
+body[data-al-theme="scifi"] .al-act-btn {
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  border: 1px solid rgba(14, 165, 233, 0.6);
+  transition: box-shadow 0.3s;
+}
+body[data-al-theme="scifi"] .al-act-btn:hover {
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.45);
+}
+
+/* —— Aviation —— */
+body[data-al-theme="aviation"] {
+  background: linear-gradient(180deg, #0c1929 0%, #1a2f4a 50%, #0a1628 100%);
+  color: #e8f4fc;
+}
+body[data-al-theme="aviation"]::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, #f59e0b 0, #f59e0b 12px, #1e3a5f 12px, #1e3a5f 24px);
+  opacity: 0.5;
+  animation: alAviStripe 3s linear infinite;
+}
+body[data-al-theme="aviation"] .al-title {
+  font-family: var(--al-mono);
+  color: #fbbf24;
+  letter-spacing: 0.15em;
+  font-size: 1.1rem;
+}
+body[data-al-theme="aviation"] .al-skin-host .gate-visual {
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #1e3a5f, #0f172a);
+}
+body[data-al-theme="aviation"] .al-act-btn {
+  border-radius: 6px;
+  border: 2px solid #64748b;
+  font-family: var(--al-mono);
+  font-size: 0.85rem;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.1);
+}
+body[data-al-theme="aviation"] .al-act-btn--open {
+  border-color: #f59e0b;
+  animation: alAviBlink 2s step-end infinite;
+}
+
+/* —— Matrix —— */
+body[data-al-theme="matrix"] {
+  background: #000;
+  color: #00ff41;
+  font-family: var(--al-mono);
+}
+body[data-al-theme="matrix"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 65, 0.03) 50%, transparent 100%);
+  background-size: 100% 4px;
+  animation: alMatrixRain 0.8s linear infinite;
+  opacity: 0.4;
+}
+body[data-al-theme="matrix"] .al-title {
+  color: #00ff41;
+  text-shadow: 0 0 8px #00ff41;
+}
+body[data-al-theme="matrix"] .al-skin-host .gate-visual {
+  border-color: #00ff41;
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.3);
+}
+body[data-al-theme="matrix"] .al-skin-host .gate-bar { background: #00ff41 !important; }
+body[data-al-theme="matrix"] .al-act-btn {
+  background: rgba(0, 20, 0, 0.9) !important;
+  border: 1px solid #00ff41;
+  color: #00ff41 !important;
+  text-shadow: 0 0 6px #00ff41;
+}
+body[data-al-theme="matrix"] .al-act-btn:hover {
+  background: rgba(0, 255, 65, 0.15) !important;
+}
+
+/* —— Mechanical —— */
+body[data-al-theme="mechanical"] {
+  background:
+    linear-gradient(135deg, #2a2a2e 25%, transparent 25%),
+    linear-gradient(225deg, #2a2a2e 25%, transparent 25%),
+    linear-gradient(45deg, #2a2a2e 25%, transparent 25%),
+    linear-gradient(315deg, #2a2a2e 25%, #1c1c1f 25%);
+  background-size: 12px 12px;
+  background-color: #252528;
+  color: #e2e8f0;
+}
+body[data-al-theme="mechanical"] .al-title {
+  color: #f97316;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+body[data-al-theme="mechanical"] .al-skin-host .gate-visual {
+  border: 3px solid #57534e;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 2px #1c1917, 4px 4px 0 #0f0f10;
+}
+body[data-al-theme="mechanical"] .al-act-btn {
+  border-radius: 4px;
+  border: 2px solid #78716c;
+  box-shadow: 4px 4px 0 #0f0f10, inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+body[data-al-theme="mechanical"] .al-act-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #0f0f10;
+}
+
+/* —— NASA —— */
+body[data-al-theme="nasa"] {
+  background: #0b0b10;
+  color: #fff;
+}
+body[data-al-theme="nasa"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 70% 20%, rgba(252, 61, 33, 0.08), transparent 40%),
+    radial-gradient(ellipse at 30% 80%, rgba(11, 61, 145, 0.15), transparent 45%);
+}
+body[data-al-theme="nasa"] .al-app { position: relative; z-index: 1; }
+body[data-al-theme="nasa"] .al-title {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  font-size: 1rem;
+  color: #fff;
+}
+body[data-al-theme="nasa"] .al-subtitle { color: #94a3b8; }
+body[data-al-theme="nasa"] .al-skin-host .gate-visual {
+  border: 2px solid #fff;
+  border-radius: 0;
+  background: #1e293b;
+}
+body[data-al-theme="nasa"] .al-act-btn {
+  border-radius: 0;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 2px solid transparent;
+}
+body[data-al-theme="nasa"] .al-act-btn--open {
+  background: #fc3d21 !important;
+  border-color: #fff;
+}
+body[data-al-theme="nasa"] .al-act-btn--stop {
+  background: #0b3d91 !important;
+}
+body[data-al-theme="nasa"] .al-act-btn--close {
+  background: #64748b !important;
+}
+
+/* —— Gaming RGB —— */
+body[data-al-theme="gaming"] {
+  background: #0f0f14;
+  color: #fff;
+}
+body[data-al-theme="gaming"]::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  pointer-events: none;
+  background: conic-gradient(from 0deg, #ff0080, #ff8c00, #40ff00, #00ffff, #8000ff, #ff0080);
+  animation: alRgbSpin 12s linear infinite;
+  opacity: 0.12;
+  filter: blur(60px);
+}
+body[data-al-theme="gaming"] .al-app { position: relative; z-index: 1; }
+body[data-al-theme="gaming"] .al-title {
+  animation: alRgbText 3s linear infinite;
+}
+body[data-al-theme="gaming"] .al-skin-host .gate-visual {
+  animation: alRgbBorder 4s linear infinite;
+}
+body[data-al-theme="gaming"] .al-act-btn {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
+  animation: alRgbBorder 3s linear infinite;
+  isolation: isolate;
+}
+body[data-al-theme="gaming"] .al-act-btn .al-act-btn__label,
+body[data-al-theme="gaming"] .al-act-btn .al-act-btn__lead,
+body[data-al-theme="gaming"] .al-act-btn .al-act-btn__trail {
+  position: relative;
+  z-index: 1;
+}
+body[data-al-theme="gaming"] .al-act-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  background: linear-gradient(90deg, #ff0080, #00ffff, #40ff00, #ff0080);
+  background-size: 300% 100%;
+  animation: alRgbSlide 2s linear infinite;
+  border-radius: inherit;
+}
+
+/* —— Retro —— */
+body[data-al-theme="retro"] {
+  background: #1a1a12;
+  color: #33ff33;
+  font-family: "Courier New", var(--al-mono), monospace;
+}
+body[data-al-theme="retro"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: alRetroFlicker 0.15s steps(2) infinite;
+  opacity: 0.3;
+}
+body[data-al-theme="retro"] .al-app { position: relative; z-index: 1; }
+body[data-al-theme="retro"] .al-title {
+  color: #33ff33;
+  text-shadow: 0 0 4px #33ff33;
+  font-size: 1.4rem;
+}
+body[data-al-theme="retro"] .al-skin-host .gate-visual {
+  border: 3px solid #33ff33;
+  border-radius: 0;
+  image-rendering: pixelated;
+  box-shadow: 4px 4px 0 #0a3d0a;
+}
+body[data-al-theme="retro"] .al-act-btn {
+  border-radius: 0;
+  border: 3px solid #33ff33 !important;
+  background: #0d260d !important;
+  color: #33ff33 !important;
+  box-shadow: 4px 4px 0 #052005;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+body[data-al-theme="retro"] .al-act-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* Keyframes */
+@keyframes alCyberPulse {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+@keyframes alCyberBtnGlow {
+  0% { box-shadow: 0 0 8px rgba(5, 217, 232, 0.4); }
+  100% { box-shadow: 0 0 18px rgba(255, 42, 109, 0.5); }
+}
+@keyframes alLuxShimmer {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes alSciPan {
+  0% { background-position: 0 0; }
+  100% { background-position: 24px 24px; }
+}
+@keyframes alAviStripe {
+  0% { background-position: 0 0; }
+  100% { background-position: 48px 0; }
+}
+@keyframes alAviBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+@keyframes alMatrixRain {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+@keyframes alRgbSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes alRgbBorder {
+  0%, 100% { border-color: #ff0080; box-shadow: 0 0 12px #ff0080; }
+  33% { border-color: #00ffff; box-shadow: 0 0 12px #00ffff; }
+  66% { border-color: #40ff00; box-shadow: 0 0 12px #40ff00; }
+}
+@keyframes alRgbText {
+  0%, 100% { color: #ff0080; }
+  33% { color: #00ffff; }
+  66% { color: #40ff00; }
+}
+@keyframes alRgbSlide {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+@keyframes alRetroFlicker {
+  0% { opacity: 0.25; }
+  100% { opacity: 0.35; }
+}

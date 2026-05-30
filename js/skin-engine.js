@@ -33,6 +33,10 @@ const AlSkinEngine = (function () {
     });
   }
 
+  function applyBodyTheme(themeId) {
+    document.body.setAttribute('data-al-theme', themeId || 'classic');
+  }
+
   function buildGateHero(region) {
     const wrap = document.createElement('div');
     wrap.className = 'al-region al-region--hero';
@@ -153,19 +157,24 @@ const AlSkinEngine = (function () {
 
     h.innerHTML = '';
     h.setAttribute('data-al-skin-active', manifest.id || 'classic');
-
+    applyBodyTheme(manifest.id);
     applyTokens(manifest.tokens);
 
+    let extraCss = '';
+    if (manifest.assets && manifest.assets.cssInline) {
+      extraCss += sanitizeCss(manifest.assets.cssInline);
+    }
     const prefs = AlConfigStore.loadSkinPrefs();
     if (prefs.customCss) {
-      let styleEl = document.getElementById('alCustomSkinCss');
-      if (!styleEl) {
-        styleEl = document.createElement('style');
-        styleEl.id = 'alCustomSkinCss';
-        document.head.appendChild(styleEl);
-      }
-      styleEl.textContent = sanitizeCss(prefs.customCss);
+      extraCss += sanitizeCss(prefs.customCss);
     }
+    let styleEl = document.getElementById('alCustomSkinCss');
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = 'alCustomSkinCss';
+      document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = extraCss;
 
     const layout = document.createElement('div');
     layout.className = manifest.layout.mode === 'grid' ? 'al-layout-grid' : 'al-layout-stack';
