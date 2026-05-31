@@ -182,6 +182,13 @@ const AlApp = (function () {
     }
   }
 
+  function onConfigReady() {
+    AlWebhook.rebuildCache();
+    savedSkinId = currentSavedSkinId();
+    remountSkin();
+    syncChrome();
+  }
+
   function init() {
     AlConfigStore.bootstrap();
     bindUi();
@@ -194,6 +201,7 @@ const AlApp = (function () {
     } else {
       syncChrome();
     }
+    window.addEventListener('autolink:config-ready', onConfigReady);
   }
 
   if (document.readyState === 'loading') {

@@ -92,6 +92,25 @@ const AlConfigStore = (function () {
     return out;
   }
 
+  function scrubUrlSensitive(hadToken) {
+    try {
+      const u = new URL(window.location.href);
+      u.searchParams.delete('token');
+      const hash = u.hash.replace(/^#/, '');
+      if (hash) {
+        const hp = new URLSearchParams(hash);
+        hp.delete('token');
+        const rest = hp.toString();
+        u.hash = rest ? '#' + rest : '';
+      }
+      window.history.replaceState({}, document.title, u.pathname + u.search + u.hash);
+    } catch (_) {
+      if (hadToken) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+  }
+
   function ingestUrlParams() {
     const p = parseParams(window.location.search, window.location.hash);
     if (!Object.keys(p).length) return { merged: false, hadToken: false };
@@ -134,23 +153,41 @@ const AlConfigStore = (function () {
     return { merged: changed, hadToken: hadToken };
   }
 
-  function scrubUrlSensitive(hadToken) {
-    try {
-      const u = new URL(window.location.href);
-      u.searchParams.delete('token');
-      const hash = u.hash.replace(/^#/, '');
-      if (hash) {
-        const hp = new URLSearchParams(hash);
-        hp.delete('token');
-        const rest = hp.toString();
-        u.hash = rest ? '#' + rest : '';
-      }
-      window.history.replaceState({}, document.title, u.pathname + u.search + u.hash);
-    } catch (_) {
-      if (hadToken) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
+  /** รับ token จากหน้า AutoDoor (postMessage) — ไม่ต้องใส่ใน URL */
+  function ingestOpenerMessage(data) {
+    if (!data || data.type !== 'autolink-blynk') return false;
+    const cur = loadBlynk();
+    if (data.host) cur.host = normalizeHost(data.host);
+    if (data.token) cur.token = String(data.token).trim();
+    const pins = data.pins || {};
+    if (pins.open != null) cur.pins.open = clampPin(pins.open, cur.pins.open);
+    if (pins.stop != null) cur.pins.stop = clampPin(pins.stop, cur.pins.stop);
+    if (pins.close != null) cur.pins.close = clampPin(pins.close, cur.pins.close);
+    saveBlynk(cur);
+    if (data.skin) {
+      const skin = loadSkinPrefs();
+      skin.activeId = String(data.skin).trim() || skin.activeId;
+      saveSkinPrefs(skin);
     }
+    scrubUrlSensitive(false);
+    return isReady(cur);
+  }
+
+  function listenOpenerHandshake() {
+    if (!window.opener) return;
+    const onMsg = function (ev) {
+      if (ingestOpenerMessage(ev.data)) {
+        window.removeEventListener('message', onMsg);
+        window.dispatchEvent(new CustomEvent('autolink:config-ready'));
+      }
+    };
+    window.addEventListener('message', onMsg);
+    try {
+      window.opener.postMessage({ type: 'autolink:need-token' }, '*');
+    } catch (_) { /* ignore */ }
+    setTimeout(function () {
+      window.removeEventListener('message', onMsg);
+    }, 15000);
   }
 
   function applyDeployConfig() {
@@ -171,10 +208,6 @@ const AlConfigStore = (function () {
     }
   }
 
-  /**
-   * โหลดอัตโนมัติ: localStorage → URL (จาก ESP) → deploy-config.js
-   * ไม่แสดงฟอร์ม — บันทึกลงเครื่องแล้วพร้อมกดปุ่ม
-   */
   function bootstrap() {
     let cfg = loadBlynk();
 
@@ -186,6 +219,10 @@ const AlConfigStore = (function () {
     if (!isReady(cfg)) {
       applyDeployConfig();
       cfg = loadBlynk();
+    }
+
+    if (!isReady(cfg)) {
+      listenOpenerHandshake();
     }
 
     return {
@@ -265,6 +302,7 @@ const AlConfigStore = (function () {
     isReady,
     maskToken,
     ingestUrlParams,
+    ingestOpenerMessage,
     bootstrap,
     applyDeployConfig,
     clearBlynk,
