@@ -1,9 +1,9 @@
-# AutoLink — ซ่อน Token ใน URL
+# AutoLink — URL สั้น + ซ่อน Token
 
-อัปโหลด `js/config-store.js` และ `js/app.js` ไปที่ [autolink GitHub](https://github.com/autolinkpromax/autolink) แล้ว deploy GitHub Pages
+อัปโหลด `js/config-store.js` และ `js/app.js` ไป [autolink GitHub](https://github.com/autolinkpromax/autolink) แล้ว deploy GitHub Pages
 
-หลัง deploy URL จะเป็นแบบนี้ (ไม่มี token):
+หลัง deploy แถบที่อยู่จะเป็น:
 
-`https://autolinkpromax.github.io/autolink/index.html?host=sgp1.blynk.cloud&vOpen=0&vStop=1&vClose=2&skin=classic`
+`https://autolinkpromax.github.io/autolink/`
 
-Token ส่งผ่าน `postMessage` จากหน้า WebUI ของเครื่อง AutoDoor-RF2
+ค่า host / token / V pin ส่งจากหน้า WebUI เครื่อง AutoDoor-RF2 ผ่าน `postMessage` (ไม่มีใน URL)

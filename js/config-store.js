@@ -92,22 +92,19 @@ const AlConfigStore = (function () {
     return out;
   }
 
-  function scrubUrlSensitive(hadToken) {
+  /** ล้าง query/hash — แถบที่อยู่เหลือแค่ /autolink/ */
+  function scrubUrlClean() {
     try {
       const u = new URL(window.location.href);
-      u.searchParams.delete('token');
-      const hash = u.hash.replace(/^#/, '');
-      if (hash) {
-        const hp = new URLSearchParams(hash);
-        hp.delete('token');
-        const rest = hp.toString();
-        u.hash = rest ? '#' + rest : '';
+      let path = u.pathname || '/autolink/';
+      if (path.endsWith('/index.html')) {
+        path = path.slice(0, -'/index.html'.length) + '/';
+      } else if (!path.endsWith('/')) {
+        path += '/';
       }
-      window.history.replaceState({}, document.title, u.pathname + u.search + u.hash);
+      window.history.replaceState({}, document.title, path);
     } catch (_) {
-      if (hadToken) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
+      window.history.replaceState({}, document.title, '/autolink/');
     }
   }
 
@@ -149,7 +146,7 @@ const AlConfigStore = (function () {
       saveSkinPrefs(skin);
     }
 
-    scrubUrlSensitive(hadToken);
+    scrubUrlClean();
     return { merged: changed, hadToken: hadToken };
   }
 
@@ -169,7 +166,7 @@ const AlConfigStore = (function () {
       skin.activeId = String(data.skin).trim() || skin.activeId;
       saveSkinPrefs(skin);
     }
-    scrubUrlSensitive(false);
+    scrubUrlClean();
     return isReady(cur);
   }
 
@@ -211,9 +208,14 @@ const AlConfigStore = (function () {
   function bootstrap() {
     let cfg = loadBlynk();
 
-    if (!isReady(cfg)) {
+    if (window.opener) {
+      scrubUrlClean();
+      listenOpenerHandshake();
+    } else if (!isReady(cfg)) {
       ingestUrlParams();
       cfg = loadBlynk();
+    } else {
+      scrubUrlClean();
     }
 
     if (!isReady(cfg)) {
@@ -221,8 +223,12 @@ const AlConfigStore = (function () {
       cfg = loadBlynk();
     }
 
-    if (!isReady(cfg)) {
+    if (!isReady(cfg) && !window.opener) {
       listenOpenerHandshake();
+    }
+
+    if (!window.opener) {
+      scrubUrlClean();
     }
 
     return {
