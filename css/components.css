@@ -41,6 +41,18 @@
   color: var(--al-act-close-color, #fff);
 }
 
+.al-act-btn--lock {
+  background: var(--al-act-lock-bg, linear-gradient(180deg, #7c3aed, #5b21b6));
+  color: var(--al-act-lock-color, #fff);
+  border: 1px solid var(--al-act-lock-border, transparent);
+}
+
+.al-act-btn--lock.is-active {
+  background: var(--al-act-lock-active-bg, linear-gradient(180deg, #f59e0b, #d97706));
+  color: var(--al-act-lock-active-color, #1c1917);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.45), 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
 .al-act-btn__lead,
 .al-act-btn__trail {
   font-size: 1.1em;

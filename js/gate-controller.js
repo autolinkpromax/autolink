@@ -1,6 +1,7 @@
 const AlGateController = (function () {
   const GATE_ANIM_MS = 1600;
   let phase = 'closed';
+  let systemLocked = false;
   let animTimer = null;
 
   function el() {
@@ -13,6 +14,10 @@ const AlGateController = (function () {
 
   function feedbackEl() {
     return typeof AlSkinEngine !== 'undefined' ? AlSkinEngine.bind('feedback') : null;
+  }
+
+  function lockBtn() {
+    return typeof AlSkinEngine !== 'undefined' ? AlSkinEngine.actionBtn('lock') : null;
   }
 
   function setPhase(next) {
@@ -36,6 +41,22 @@ const AlGateController = (function () {
     if (kind) f.classList.add(kind);
   }
 
+  function applySystemLockUi() {
+    const gate = el();
+    if (gate) gate.classList.toggle('system-locked', systemLocked);
+    document.body.classList.toggle('al-system-locked', systemLocked);
+
+    const btn = lockBtn();
+    if (!btn) return;
+    btn.classList.toggle('is-active', systemLocked);
+    btn.setAttribute('aria-pressed', systemLocked ? 'true' : 'false');
+    const label = btn.querySelector('.al-act-btn__label');
+    if (label) {
+      const unlocked = btn.getAttribute('data-al-lock-label') || 'ล็อกระบบ';
+      label.textContent = systemLocked ? 'ปลดล็อก' : unlocked;
+    }
+  }
+
   function clearAnimTimer() {
     if (animTimer) {
       clearTimeout(animTimer);
@@ -56,39 +77,62 @@ const AlGateController = (function () {
     if (action === 'open') {
       setPhase('moving');
       setStatusText('กำลังเปิดประตู…');
-      afterMoving('open', 'ประตูเปิด');
+      afterMoving('open', systemLocked ? 'ประตูเปิด (ระบบล็อก)' : 'ประตูเปิด');
       return;
     }
     if (action === 'close') {
       setPhase('moving');
       setStatusText('กำลังปิดประตู…');
-      afterMoving('closed', 'ประตูปิด');
+      afterMoving('closed', systemLocked ? 'ประตูปิด (ระบบล็อก)' : 'ประตูปิด');
       return;
     }
     if (action === 'stop') {
       clearAnimTimer();
       setPhase('stopped');
-      setStatusText('หยุดแล้ว');
+      setStatusText(systemLocked ? 'หยุดแล้ว (ระบบล็อก)' : 'หยุดแล้ว');
+      return;
+    }
+    if (action === 'lock') {
+      systemLocked = !systemLocked;
+      applySystemLockUi();
+      setStatusText(systemLocked ? 'ระบบล็อก — รีโมท/แท็กปิด' : 'ระบบปลดล็อก');
       return;
     }
   }
 
+  function revertLockToggle() {
+    systemLocked = !systemLocked;
+    applySystemLockUi();
+    setStatusText(systemLocked ? 'ระบบล็อก — รีโมท/แท็กปิด' : 'ระบบปลดล็อก');
+  }
+
   function init() {
+    systemLocked = false;
     setPhase('closed');
     setStatusText('ประตูปิด');
     setFeedback('', null);
+    applySystemLockUi();
   }
 
   function setButtonsDisabled(disabled) {
-    ['open', 'stop', 'close'].forEach(function (slot) {
+    ['open', 'stop', 'close', 'lock'].forEach(function (slot) {
       const btn = typeof AlSkinEngine !== 'undefined' ? AlSkinEngine.actionBtn(slot) : null;
       if (btn) btn.disabled = !!disabled;
     });
   }
 
+  function getSystemLockValue() {
+    return systemLocked ? 1 : 0;
+  }
+
+  function isSystemLocked() {
+    return systemLocked;
+  }
+
   function snapshot() {
     return {
       phase: phase,
+      systemLocked: systemLocked,
       statusText: statusEl() ? statusEl().textContent : ''
     };
   }
@@ -96,16 +140,21 @@ const AlGateController = (function () {
   function restore(snap) {
     if (!snap) return;
     clearAnimTimer();
+    systemLocked = !!snap.systemLocked;
     setPhase(snap.phase || 'closed');
     if (snap.statusText) setStatusText(snap.statusText);
+    applySystemLockUi();
   }
 
   return {
     GATE_ANIM_MS,
     init,
     onAction,
+    revertLockToggle,
     setFeedback,
     setButtonsDisabled,
+    getSystemLockValue,
+    isSystemLocked,
     getPhase: function () { return phase; },
     snapshot,
     restore

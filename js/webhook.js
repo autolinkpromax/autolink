@@ -2,10 +2,11 @@ const AlWebhook = (function () {
   const DEBOUNCE_MS = 400;
   let lastFireMs = 0;
   let busy = false;
-  /** @type {{ open: string, stop: string, close: string } | null} */
+  /** @type {{ open: string, stop: string, close: string, lock: (pin: number) => string } | null} */
   let cachedUrls = null;
 
-  function buildUrl(host, token, pin) {
+  function buildUrl(host, token, pin, value) {
+    const v = value == null ? 1 : (value ? 1 : 0);
     return (
       'https://' +
       host +
@@ -13,7 +14,8 @@ const AlWebhook = (function () {
       encodeURIComponent(token) +
       '&V' +
       pin +
-      '=1'
+      '=' +
+      v
     );
   }
 
@@ -22,20 +24,26 @@ const AlWebhook = (function () {
     if (action === 'open') return pins.open;
     if (action === 'stop') return pins.stop;
     if (action === 'close') return pins.close;
+    if (action === 'lock') return pins.lock;
     return null;
   }
 
-  /** สร้าง URL webhook ทั้ง 3 ปุ่ม — เรียกหลัง bootstrap */
+  /** สร้าง URL webhook — lock ใช้ฟังก์ชันเพราะส่ง 0/1 */
   function rebuildCache() {
     const cfg = AlConfigStore.loadBlynk();
     if (!AlConfigStore.isReady(cfg)) {
       cachedUrls = null;
       return null;
     }
+    const host = cfg.host;
+    const token = cfg.token;
     cachedUrls = {
-      open: buildUrl(cfg.host, cfg.token, cfg.pins.open),
-      stop: buildUrl(cfg.host, cfg.token, cfg.pins.stop),
-      close: buildUrl(cfg.host, cfg.token, cfg.pins.close)
+      open: buildUrl(host, token, cfg.pins.open, 1),
+      stop: buildUrl(host, token, cfg.pins.stop, 1),
+      close: buildUrl(host, token, cfg.pins.close, 1),
+      lock: function (value) {
+        return buildUrl(host, token, cfg.pins.lock, value);
+      }
     };
     return cachedUrls;
   }
@@ -52,6 +60,8 @@ const AlWebhook = (function () {
       const btn = typeof AlSkinEngine !== 'undefined' ? AlSkinEngine.actionBtn(action) : null;
       if (btn && urls[action]) btn.setAttribute('data-al-webhook-url', urls[action]);
     });
+    const lockBtn = typeof AlSkinEngine !== 'undefined' ? AlSkinEngine.actionBtn('lock') : null;
+    if (lockBtn) lockBtn.removeAttribute('data-al-webhook-url');
   }
 
   function fireGet(url) {
@@ -65,10 +75,11 @@ const AlWebhook = (function () {
   }
 
   /**
-   * @param {'open'|'stop'|'close'} action
+   * @param {'open'|'stop'|'close'|'lock'} action
+   * @param {{ lockValue?: 0|1 }} [opts]
    * @returns {Promise<{ ok: boolean, error?: string }>}
    */
-  async function trigger(action) {
+  async function trigger(action, opts) {
     const now = Date.now();
     if (busy || now - lastFireMs < DEBOUNCE_MS) {
       return { ok: false, error: 'debounce' };
@@ -82,8 +93,16 @@ const AlWebhook = (function () {
     const pin = pinForAction(cfg, action);
     if (pin == null) return { ok: false, error: 'bad_action' };
 
-    const urls = getCachedUrls();
-    const url = (urls && urls[action]) || buildUrl(cfg.host, cfg.token, pin);
+    let url;
+    if (action === 'lock') {
+      const lockVal = opts && opts.lockValue != null ? (opts.lockValue ? 1 : 0) : 1;
+      const urls = getCachedUrls();
+      url = (urls && urls.lock) ? urls.lock(lockVal) : buildUrl(cfg.host, cfg.token, pin, lockVal);
+    } else {
+      const urls = getCachedUrls();
+      url = (urls && urls[action]) || buildUrl(cfg.host, cfg.token, pin, 1);
+    }
+
     busy = true;
     lastFireMs = now;
 

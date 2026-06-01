@@ -119,11 +119,21 @@ const AlApp = (function () {
     AlGateController.setFeedback('กำลังส่ง…', null);
     AlGateController.onAction(action);
 
-    const res = await AlWebhook.trigger(action);
+    const lockOpts = action === 'lock' ? { lockValue: AlGateController.getSystemLockValue() } : undefined;
+    const res = await AlWebhook.trigger(action, lockOpts);
     AlGateController.setButtonsDisabled(false);
 
+    if (!res.ok && action === 'lock') {
+      AlGateController.revertLockToggle();
+    }
+
     if (res.ok) {
-      const labels = { open: 'ส่งคำสั่งเปิดแล้ว', stop: 'ส่งคำสั่งหยุดแล้ว', close: 'ส่งคำสั่งปิดแล้ว' };
+      const labels = {
+        open: 'ส่งคำสั่งเปิดแล้ว',
+        stop: 'ส่งคำสั่งหยุดแล้ว',
+        close: 'ส่งคำสั่งปิดแล้ว',
+        lock: AlGateController.isSystemLocked() ? 'ล็อกระบบแล้ว' : 'ปลดล็อกระบบแล้ว'
+      };
       AlGateController.setFeedback(labels[action] || 'ส่งแล้ว', 'ok');
     } else {
       AlGateController.setFeedback(ERROR_TH[res.error] || 'ส่งไม่สำเร็จ', 'err');

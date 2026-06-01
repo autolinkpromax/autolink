@@ -283,6 +283,22 @@ body[data-al-theme="cyberpunk"] .al-act-btn--close {
     linear-gradient(168deg, #6e7380 0%, #454a58 40%, #252830 75%, #101218 100%) !important;
 }
 
+body[data-al-theme="cyberpunk"] .al-act-btn--lock {
+  background:
+    linear-gradient(180deg, rgba(220, 180, 255, 0.35) 0%, transparent 40%),
+    repeating-linear-gradient(102deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 3px),
+    linear-gradient(168deg, #a855f7 0%, #6d28d9 40%, #4c1d95 75%, #2e1065 100%) !important;
+  border-color: rgba(168, 85, 247, 0.55) !important;
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.35);
+}
+
+body[data-al-theme="cyberpunk"] .al-act-btn--lock.is-active {
+  background:
+    linear-gradient(168deg, #fbbf24 0%, #d97706 50%, #92400e 100%) !important;
+  border-color: rgba(251, 191, 36, 0.7) !important;
+  box-shadow: 0 0 28px rgba(251, 191, 36, 0.45);
+}
+
 body[data-al-theme="cyberpunk"] .al-act-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   filter: brightness(1.12) saturate(1.15);
@@ -503,6 +519,18 @@ body[data-al-theme="matrix"] .al-act-btn:hover {
   background: rgba(0, 255, 65, 0.15) !important;
 }
 
+body[data-al-theme="matrix"] .al-act-btn--lock {
+  border-color: #a855f7 !important;
+  color: #d8b4fe !important;
+  text-shadow: 0 0 8px #a855f7;
+}
+
+body[data-al-theme="matrix"] .al-act-btn--lock.is-active {
+  border-color: #fbbf24 !important;
+  color: #fbbf24 !important;
+  text-shadow: 0 0 10px #fbbf24;
+}
+
 /* —— Mechanical —— */
 body[data-al-theme="mechanical"] {
   background:
@@ -578,6 +606,16 @@ body[data-al-theme="nasa"] .al-act-btn--stop {
 }
 body[data-al-theme="nasa"] .al-act-btn--close {
   background: #64748b !important;
+}
+
+body[data-al-theme="nasa"] .al-act-btn--lock {
+  background: #7c3aed !important;
+  border-color: #fff;
+}
+
+body[data-al-theme="nasa"] .al-act-btn--lock.is-active {
+  background: #fbbf24 !important;
+  color: #0b0b10 !important;
 }
 
 /* —— Gaming RGB —— */
@@ -672,6 +710,12 @@ body[data-al-theme="retro"] .al-act-btn {
 body[data-al-theme="retro"] .al-act-btn:active {
   transform: translate(4px, 4px);
   box-shadow: none;
+}
+
+body[data-al-theme="retro"] .al-act-btn--lock.is-active {
+  border-color: #fbbf24 !important;
+  color: #fbbf24 !important;
+  box-shadow: 4px 4px 0 #3d2a00;
 }
 
 /* Keyframes */

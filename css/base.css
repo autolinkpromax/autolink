@@ -239,6 +239,18 @@ body {
   grid-column: 1 / -1;
 }
 
+.al-actions-host[data-placement="magic"] .al-act-btn[data-al-action="lock"] {
+  grid-column: 1 / -1;
+}
+
+.al-actions-host[data-placement="row"] .al-act-btn[data-al-action="lock"] {
+  flex: 1 1 100%;
+}
+
+.al-actions-host[data-placement="row"] .al-act-btn {
+  min-height: 48px;
+}
+
 .al-actions-host[data-placement="absolute"] {
   min-height: 200px;
 }

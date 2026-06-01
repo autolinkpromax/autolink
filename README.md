@@ -14,7 +14,7 @@
 window.AL_DEPLOY_CONFIG = {
   host: 'sgp1.blynk.cloud',
   token: 'รหัสจาก blynk.cloud',
-  pins: { open: 0, stop: 1, close: 2 },
+  pins: { open: 0, stop: 1, close: 2, lock: 3 },
   skin: 'classic'
 };
 ```
@@ -23,7 +23,9 @@ window.AL_DEPLOY_CONFIG = {
 
 ### B — เปิดจากเครื่อง AutoDoor-RF2 ครั้งแรก
 
-ตั้งค่า → Blynk IoT → **เปิด AutoLink** — ส่ง host/token/V pin อัตโนมัติ บันทึกในเครื่องนั้น
+ตั้งค่า → Blynk IoT → **เปิด AutoLink** — ส่ง host/token/V pin (เปิด/หยุด/ปิด/ล็อก) อัตโนมัติ บันทึกในเครื่องนั้น
+
+ปุ่ม **ล็อกระบบ** ส่งค่า Blynk V ล็อกเป็น `1` = ล็อก, `0` = ปลด (สลับจากหน้าเว็บ)
 
 ครั้งหลังเปิด [index.html](https://autolinkpromax.github.io/autolink/index.html) ตรงๆ → ใช้ค่าที่บันทึกไว้ ไม่ต้องกรอก
 

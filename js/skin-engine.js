@@ -90,7 +90,7 @@ const AlSkinEngine = (function () {
       actionsHost.style.gridTemplateColumns = placement.columns;
     }
 
-    const order = region.order || ['open', 'stop', 'close'];
+    const order = region.order || ['open', 'stop', 'close', 'lock'];
     const buttons = region.buttons || {};
 
     order.forEach(function (slot) {
@@ -102,6 +102,10 @@ const AlSkinEngine = (function () {
       btn.className = 'al-act-btn al-act-btn--' + (meta.variant || slot);
       btn.setAttribute('data-al-bind', 'action-' + slot);
       btn.setAttribute('data-al-action', slot);
+      if (slot === 'lock') {
+        btn.setAttribute('data-al-lock-label', meta.label || 'ล็อกระบบ');
+        btn.setAttribute('aria-pressed', 'false');
+      }
 
       const slotPlacement = placement.slots && placement.slots[slot];
       if (mode === 'absolute' && slotPlacement) {

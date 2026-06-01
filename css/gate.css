@@ -130,6 +130,25 @@
   box-shadow: 0 0 8px #f59e0b;
 }
 
+#alSkinHost .gate-visual.system-locked .gate-bars {
+  border-color: #a855f7;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.45);
+}
+
+#alSkinHost .gate-visual.system-locked .gate-bar {
+  background: #a855f7;
+}
+
+#alSkinHost .gate-visual.system-locked .gate-led {
+  background: #a855f7;
+  box-shadow: 0 0 10px #a855f7;
+  animation: alLedBlink 1.2s infinite alternate;
+}
+
+body.al-system-locked .al-status-text {
+  color: #c4b5fd;
+}
+
 @keyframes alGateMovingPulse {
   0% { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); }
   100% { box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }

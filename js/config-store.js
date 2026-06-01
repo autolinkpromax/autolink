@@ -1,4 +1,4 @@
-/** @typedef {{ host: string, token: string, pins: { open: number, stop: number, close: number } }} AlBlynkConfig */
+/** @typedef {{ host: string, token: string, pins: { open: number, stop: number, close: number, lock: number } }} AlBlynkConfig */
 /** @typedef {{ activeId: string, customManifest?: object, customCss?: string }} AlSkinPrefs */
 
 const AL_BLYNK_KEY = 'autolink.blynk.v1';
@@ -11,7 +11,7 @@ const AlConfigStore = (function () {
     return {
       host: AL_DEFAULT_HOST,
       token: '',
-      pins: { open: 0, stop: 1, close: 2 }
+      pins: { open: 0, stop: 1, close: 2, lock: 3 }
     };
   }
 
@@ -62,7 +62,8 @@ const AlConfigStore = (function () {
       pins: {
         open: clampPin(pins.open, d.pins.open),
         stop: clampPin(pins.stop, d.pins.stop),
-        close: clampPin(pins.close, d.pins.close)
+        close: clampPin(pins.close, d.pins.close),
+        lock: clampPin(pins.lock, d.pins.lock)
       }
     };
   }
@@ -137,6 +138,10 @@ const AlConfigStore = (function () {
       cur.pins.close = clampPin(p.vClose, cur.pins.close);
       changed = true;
     }
+    if (p.vLock != null) {
+      cur.pins.lock = clampPin(p.vLock, cur.pins.lock);
+      changed = true;
+    }
 
     if (changed) saveBlynk(cur);
 
@@ -160,6 +165,7 @@ const AlConfigStore = (function () {
     if (pins.open != null) cur.pins.open = clampPin(pins.open, cur.pins.open);
     if (pins.stop != null) cur.pins.stop = clampPin(pins.stop, cur.pins.stop);
     if (pins.close != null) cur.pins.close = clampPin(pins.close, cur.pins.close);
+    if (pins.lock != null) cur.pins.lock = clampPin(pins.lock, cur.pins.lock);
     saveBlynk(cur);
     if (data.skin) {
       const skin = loadSkinPrefs();
