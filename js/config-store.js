@@ -199,7 +199,7 @@ const AlConfigStore = (function () {
     return { merged: changed, hadToken: hadToken };
   }
 
-  /** รับ config จากหน้า AutoDoor (postMessage) — ไม่ต้องใส่ใน URL */
+  /** รับ config จากหน้า AutoLink ESP (postMessage) — ไม่ต้องใส่ใน URL */
   function ingestOpenerMessage(data) {
     if (!data || !data.type) return false;
 

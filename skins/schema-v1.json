@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://autodoor.local/autolink-skin/v1",
+  "$id": "https://autolink.local/autolink-skin/v1",
   "title": "AutoLinkSkinManifestV1",
   "type": "object",
   "required": ["schema", "id", "name", "layout", "regions"],

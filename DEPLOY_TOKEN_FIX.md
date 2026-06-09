@@ -6,4 +6,4 @@
 
 `https://autolinkpromax.github.io/autolink/`
 
-ค่า host / token / V pin ส่งจากหน้า WebUI เครื่อง AutoDoor-RF2 ผ่าน `postMessage` (ไม่มีใน URL)
+ค่า host / token / V pin ส่งจากหน้า WebUI เครื่อง AutoLink ผ่าน `postMessage` (ไม่มีใน URL)
