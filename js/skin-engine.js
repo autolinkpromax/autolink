@@ -90,7 +90,7 @@ const AlSkinEngine = (function () {
       actionsHost.style.gridTemplateColumns = placement.columns;
     }
 
-    const order = region.order || ['open', 'stop', 'close', 'lock'];
+    const order = region.order || ['open', 'stop', 'close'];
     const buttons = region.buttons || {};
 
     order.forEach(function (slot) {

@@ -7,12 +7,11 @@ const AL_SKIN_CLASSIC = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'สถานะปัจจุบัน' },
     actions: {
       placement: { mode: 'stack' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'เปิดประตู', iconLead: '🚪', iconTrail: '›', variant: 'open' },
         stop: { label: 'หยุด', iconLead: '✋', iconTrail: '⚠', variant: 'stop' },
-        close: { label: 'ปิดประตู', iconLead: '🚪', iconTrail: '›', variant: 'close' },
-        lock: { label: 'ล็อกระบบ', iconLead: '🔒', iconTrail: '🔐', variant: 'lock' }
+        close: { label: 'ปิดประตู', iconLead: '🚪', iconTrail: '›', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -20,9 +19,7 @@ const AL_SKIN_CLASSIC = {
   tokens: {
     '--al-act-open-bg': 'linear-gradient(180deg,#4d8ee8,#3a6fc9)',
     '--al-act-stop-bg': 'linear-gradient(180deg,#d94a58,#b83240)',
-    '--al-act-close-bg': 'linear-gradient(180deg,#64748b,#475569)',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
+    '--al-act-close-bg': 'linear-gradient(180deg,#64748b,#475569)'
   }
 };
 
@@ -35,12 +32,11 @@ const AL_SKIN_ROW3 = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'สถานะ' },
     actions: {
       placement: { mode: 'row' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'เปิด', iconLead: '🚪', variant: 'open' },
         stop: { label: 'หยุด', iconLead: '✋', variant: 'stop' },
-        close: { label: 'ปิด', iconLead: '🚪', variant: 'close' },
-        lock: { label: 'ล็อก', iconLead: '🔒', variant: 'lock' }
+        close: { label: 'ปิด', iconLead: '🚪', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -50,8 +46,6 @@ const AL_SKIN_ROW3 = {
     '--al-act-open-bg': 'linear-gradient(180deg,#22c55e,#16a34a)',
     '--al-act-stop-bg': 'linear-gradient(180deg,#f59e0b,#d97706)',
     '--al-act-close-bg': 'linear-gradient(180deg,#64748b,#334155)',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -64,12 +58,11 @@ const AL_SKIN_MAGIC = {
     hero: { type: 'gateBars', showStatusLabel: false },
     actions: {
       placement: { mode: 'magic' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'เปิดประตู', iconLead: '✨', iconTrail: '🚪', variant: 'open' },
         stop: { label: 'หยุด', iconLead: '✋', variant: 'stop' },
-        close: { label: 'ปิดประตู', iconLead: '🚪', variant: 'close' },
-        lock: { label: 'ล็อกระบบ', iconLead: '🔒', variant: 'lock' }
+        close: { label: 'ปิดประตู', iconLead: '🚪', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -79,8 +72,6 @@ const AL_SKIN_MAGIC = {
     '--al-act-stop-bg': 'linear-gradient(180deg,#f43f5e,#e11d48)',
     '--al-act-close-bg': 'linear-gradient(180deg,#475569,#1e293b)',
     '--al-hero-bg': '#1a1033',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -93,12 +84,11 @@ const AL_SKIN_CYBERPUNK = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'NEURAL GATE' },
     actions: {
       placement: { mode: 'row' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'OPEN', iconLead: '▶', variant: 'open' },
         stop: { label: 'HALT', iconLead: '■', variant: 'stop' },
-        close: { label: 'SHUT', iconLead: '◼', variant: 'close' },
-        lock: { label: 'SYS LOCK', iconLead: '⛨', variant: 'lock' }
+        close: { label: 'SHUT', iconLead: '◼', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -114,8 +104,6 @@ const AL_SKIN_CYBERPUNK = {
     '--al-line': 'rgba(0,245,255,0.35)',
     '--al-muted': '#b8e8ff',
     '--al-surface-2': '#2a2460',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -128,12 +116,11 @@ const AL_SKIN_LUXURY = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'Private Access' },
     actions: {
       placement: { mode: 'stack' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'เปิดประตู', iconLead: '◆', variant: 'open' },
         stop: { label: 'หยุด', iconLead: '◇', variant: 'stop' },
-        close: { label: 'ปิดประตู', iconLead: '◆', variant: 'close' },
-        lock: { label: 'ล็อกระบบ', iconLead: '🔒', variant: 'lock' }
+        close: { label: 'ปิดประตู', iconLead: '◆', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -145,8 +132,6 @@ const AL_SKIN_LUXURY = {
     '--al-hero-bg': '#1f1a14',
     '--al-radius': '4px',
     '--al-radius-sm': '4px',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -160,15 +145,13 @@ const AL_SKIN_SCIFI = {
     actions: {
       placement: {
         mode: 'grid',
-        columns: '1fr 1fr 1fr',
-        slots: { lock: { gridColumn: '1 / -1' } }
+        columns: '1fr 1fr 1fr'
       },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'OPEN', variant: 'open' },
         stop: { label: 'STOP', variant: 'stop' },
-        close: { label: 'CLOSE', variant: 'close' },
-        lock: { label: 'LOCK', variant: 'lock' }
+        close: { label: 'CLOSE', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -178,8 +161,6 @@ const AL_SKIN_SCIFI = {
     '--al-act-stop-bg': 'linear-gradient(180deg,#8b5cf6,#6d28d9)',
     '--al-act-close-bg': 'linear-gradient(180deg,#334155,#1e293b)',
     '--al-hero-bg': '#0f172a',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -192,12 +173,11 @@ const AL_SKIN_AVIATION = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'COCKPIT / BARRIER' },
     actions: {
       placement: { mode: 'magic' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'DEPLOY OPEN', iconLead: '✈', variant: 'open' },
         stop: { label: 'HOLD', iconLead: '⏸', variant: 'stop' },
-        close: { label: 'SECURE', iconLead: '🔒', variant: 'close' },
-        lock: { label: 'ARM LOCK', iconLead: '🔐', variant: 'lock' }
+        close: { label: 'SECURE', iconLead: '🔒', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -207,8 +187,6 @@ const AL_SKIN_AVIATION = {
     '--al-act-stop-bg': 'linear-gradient(180deg,#ef4444,#b91c1c)',
     '--al-act-close-bg': 'linear-gradient(180deg,#475569,#334155)',
     '--al-hero-bg': '#0f2744',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -221,12 +199,11 @@ const AL_SKIN_MATRIX = {
     hero: { type: 'gateBars', showStatusLabel: false },
     actions: {
       placement: { mode: 'stack' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'เปิด', iconLead: '>', variant: 'open' },
         stop: { label: 'หยุด', iconLead: '#', variant: 'stop' },
-        close: { label: 'ปิด', iconLead: '<', variant: 'close' },
-        lock: { label: 'LOCK', iconLead: '!', variant: 'lock' }
+        close: { label: 'ปิด', iconLead: '<', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -237,8 +214,6 @@ const AL_SKIN_MATRIX = {
     '--al-act-close-bg': 'rgba(0, 20, 0, 0.95)',
     '--al-hero-bg': '#001100',
     '--al-muted': '#00cc33',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -251,12 +226,11 @@ const AL_SKIN_MECHANICAL = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'HYDRAULIC GATE' },
     actions: {
       placement: { mode: 'row' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'RAISE', iconLead: '⬆', variant: 'open' },
         stop: { label: 'LOCK', iconLead: '⏹', variant: 'stop' },
-        close: { label: 'LOWER', iconLead: '⬇', variant: 'close' },
-        lock: { label: 'SYS LOCK', iconLead: '🔒', variant: 'lock' }
+        close: { label: 'LOWER', iconLead: '⬇', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -266,8 +240,6 @@ const AL_SKIN_MECHANICAL = {
     '--al-act-stop-bg': 'linear-gradient(180deg,#eab308,#ca8a04)',
     '--al-act-close-bg': 'linear-gradient(180deg,#57534e,#44403c)',
     '--al-hero-bg': '#292524',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -280,12 +252,11 @@ const AL_SKIN_NASA = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'MISSION STATUS' },
     actions: {
       placement: { mode: 'stack' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'GO / OPEN', variant: 'open' },
         stop: { label: 'ABORT', variant: 'stop' },
-        close: { label: 'CLOSE', variant: 'close' },
-        lock: { label: 'LOCKDOWN', variant: 'lock' }
+        close: { label: 'CLOSE', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -297,8 +268,6 @@ const AL_SKIN_NASA = {
     '--al-hero-bg': '#1e293b',
     '--al-radius': '0',
     '--al-radius-sm': '0',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -311,12 +280,11 @@ const AL_SKIN_GAMING = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'PLAYER 1' },
     actions: {
       placement: { mode: 'magic' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'เปิดประตู', iconLead: '🎮', variant: 'open' },
         stop: { label: 'หยุด', iconLead: '⏸', variant: 'stop' },
-        close: { label: 'ปิด', iconLead: '🚪', variant: 'close' },
-        lock: { label: 'ล็อก', iconLead: '🔒', variant: 'lock' }
+        close: { label: 'ปิด', iconLead: '🚪', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -326,8 +294,6 @@ const AL_SKIN_GAMING = {
     '--al-act-stop-bg': 'linear-gradient(135deg,#2563eb,#06b6d4)',
     '--al-act-close-bg': 'linear-gradient(135deg,#374151,#111827)',
     '--al-hero-bg': '#18181b',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
@@ -340,12 +306,11 @@ const AL_SKIN_RETRO = {
     hero: { type: 'gateBars', showStatusLabel: true, statusLabel: 'SYSTEM' },
     actions: {
       placement: { mode: 'row' },
-      order: ['open', 'stop', 'close', 'lock'],
+      order: ['open', 'stop', 'close'],
       buttons: {
         open: { label: 'OPEN', iconLead: '[', iconTrail: ']', variant: 'open' },
         stop: { label: 'STOP', iconLead: '[', iconTrail: ']', variant: 'stop' },
-        close: { label: 'CLOSE', iconLead: '[', iconTrail: ']', variant: 'close' },
-        lock: { label: 'LOCK', iconLead: '[', iconTrail: ']', variant: 'lock' }
+        close: { label: 'CLOSE', iconLead: '[', iconTrail: ']', variant: 'close' }
       }
     },
     feedback: { visible: true }
@@ -360,8 +325,6 @@ const AL_SKIN_RETRO = {
     '--al-hero-bg': '#0a1f0a',
     '--al-radius': '0',
     '--al-radius-sm': '0',
-    '--al-act-lock-bg': 'linear-gradient(180deg,#7c3aed,#5b21b6)',
-    '--al-act-lock-color': '#fff'
   }
 };
 
