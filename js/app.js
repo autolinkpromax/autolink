@@ -20,6 +20,14 @@ const AlApp = (function () {
     if (kind) el.classList.add(kind);
   }
 
+  function setConnectMsg(text, kind) {
+    const el = $('alConnectMsg');
+    if (!el) return;
+    el.textContent = text || '';
+    el.classList.remove('ok', 'err');
+    if (kind) el.classList.add(kind);
+  }
+
   function isReady() {
     return AlConfigStore.isConfigured();
   }
@@ -169,7 +177,28 @@ const AlApp = (function () {
     remountSkinPreview(sel.value);
   }
 
+  function onConnectSubmit(ev) {
+    ev.preventDefault();
+    const tokenEl = $('alConnectToken');
+    const hostEl = $('alConnectHost');
+    const token = tokenEl ? String(tokenEl.value || '').trim() : '';
+    const host = hostEl ? String(hostEl.value || '').trim() : '';
+    if (token.length < 8) {
+      setConnectMsg('Token สั้นเกินไป — ตรวจจาก blynk.cloud', 'err');
+      return;
+    }
+    const cfg = AlConfigStore.loadBlynk();
+    cfg.token = token;
+    if (host) cfg.host = host;
+    AlConfigStore.saveBlynk(cfg);
+    setConnectMsg('เชื่อมต่อแล้ว — กำลังโหลด…', 'ok');
+    onConfigReady();
+  }
+
   function bindUi() {
+    const connectForm = $('alConnectForm');
+    if (connectForm) connectForm.addEventListener('submit', onConnectSubmit);
+
     const form = $('alSetupForm');
     if (form) form.addEventListener('submit', onSetupSubmit);
 

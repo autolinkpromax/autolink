@@ -237,9 +237,11 @@ const AlConfigStore = (function () {
 
   function listenOpenerHandshake() {
     if (!window.opener) return;
+    let readyFired = false;
     const onMsg = function (ev) {
-      if (ingestOpenerMessage(ev.data)) {
-        window.removeEventListener('message', onMsg);
+      if (!ingestOpenerMessage(ev.data)) return;
+      if (!readyFired && isConfigured()) {
+        readyFired = true;
         window.dispatchEvent(new CustomEvent('autolink:config-ready'));
       }
     };
@@ -249,6 +251,10 @@ const AlConfigStore = (function () {
     } catch (_) { /* ignore */ }
     setTimeout(function () {
       window.removeEventListener('message', onMsg);
+      if (!readyFired && isConfigured()) {
+        readyFired = true;
+        window.dispatchEvent(new CustomEvent('autolink:config-ready'));
+      }
     }, 15000);
   }
 

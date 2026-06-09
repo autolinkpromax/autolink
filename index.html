@@ -41,7 +41,33 @@
 
     <div id="alNeedConfig" class="al-need-config" hidden>
 
-      <p>ยังไม่พร้อม — เปิดจากเครื่อง <strong>AutoDoor-RF2</strong> (ตั้งค่า → AutoLink → เปิด AutoLink) หรือใส่ Token ใน <code>js/deploy-config.js</code> ก่อนอัปโหลด GitHub</p>
+      <p class="al-need-config__lead">เชื่อมต่อครั้งแรก — ใส่ Blynk Auth Token แล้วกดปุ่มด้านล่าง</p>
+
+      <form id="alConnectForm" class="al-connect-form" autocomplete="off">
+
+        <label class="al-field">
+
+          <span>Blynk Auth Token</span>
+
+          <input id="alConnectToken" name="token" type="text" inputmode="text" spellcheck="false" autocomplete="off" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" required minlength="8" />
+
+        </label>
+
+        <label class="al-field">
+
+          <span>Server (ไม่บังคับ)</span>
+
+          <input id="alConnectHost" name="host" type="text" spellcheck="false" placeholder="sgp1.blynk.cloud" />
+
+        </label>
+
+        <button type="submit" class="al-btn al-btn--primary al-connect-submit">เริ่มใช้งาน</button>
+
+        <p class="al-setup-msg" id="alConnectMsg" role="status"></p>
+
+      </form>
+
+      <p class="al-need-config__hint">หา Token ที่ <a href="https://blynk.cloud/" target="_blank" rel="noopener noreferrer">blynk.cloud</a> → Device → Auth Token · หรือเปิดจาก <strong>AutoDoor-RF2</strong> (ตั้งค่า → AutoLink → เปิด AutoLink) เพื่อตั้งค่าอัตโนมัติ</p>
 
     </div>
 

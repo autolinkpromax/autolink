@@ -295,6 +295,32 @@ body {
   line-height: 1.5;
 }
 
+.al-need-config__lead {
+  margin: 0 0 12px;
+  color: var(--al-text);
+  font-weight: 600;
+}
+
+.al-need-config__hint {
+  margin: 12px 0 0;
+  font-size: 0.82rem;
+}
+
+.al-need-config__hint a {
+  color: #60a5fa;
+}
+
+.al-connect-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.al-connect-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
 .al-need-config[hidden],
 .al-setup[hidden] {
   display: none;
