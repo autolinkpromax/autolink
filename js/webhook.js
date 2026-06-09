@@ -30,8 +30,21 @@ const AlWebhook = (function () {
 
   /** สร้าง URL webhook — lock ใช้ฟังก์ชันเพราะส่ง 0/1 */
   function rebuildCache() {
+    const wh = AlConfigStore.loadWebhook();
+    if (AlConfigStore.isWebhookReady(wh)) {
+      cachedUrls = {
+        open: wh.hooks.open,
+        stop: wh.hooks.stop,
+        close: wh.hooks.close,
+        lock: function (value) {
+          return value ? wh.hooks.lockOn : wh.hooks.lockOff;
+        }
+      };
+      return cachedUrls;
+    }
+
     const cfg = AlConfigStore.loadBlynk();
-    if (!AlConfigStore.isReady(cfg)) {
+    if (!AlConfigStore.isBlynkReady(cfg)) {
       cachedUrls = null;
       return null;
     }
@@ -85,22 +98,21 @@ const AlWebhook = (function () {
       return { ok: false, error: 'debounce' };
     }
 
-    const cfg = AlConfigStore.loadBlynk();
-    if (!AlConfigStore.isReady(cfg)) {
+    if (!AlConfigStore.isConfigured()) {
       return { ok: false, error: 'no_config' };
     }
 
-    const pin = pinForAction(cfg, action);
-    if (pin == null) return { ok: false, error: 'bad_action' };
+    const urls = getCachedUrls();
+    if (!urls) return { ok: false, error: 'no_config' };
 
     let url;
     if (action === 'lock') {
       const lockVal = opts && opts.lockValue != null ? (opts.lockValue ? 1 : 0) : 1;
-      const urls = getCachedUrls();
-      url = (urls && urls.lock) ? urls.lock(lockVal) : buildUrl(cfg.host, cfg.token, pin, lockVal);
+      url = urls.lock ? urls.lock(lockVal) : '';
+      if (!url) return { ok: false, error: 'bad_action' };
     } else {
-      const urls = getCachedUrls();
-      url = (urls && urls[action]) || buildUrl(cfg.host, cfg.token, pin, 1);
+      url = urls[action] || '';
+      if (!url) return { ok: false, error: 'bad_action' };
     }
 
     busy = true;

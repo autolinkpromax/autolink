@@ -21,7 +21,7 @@ const AlApp = (function () {
   }
 
   function isReady() {
-    return AlConfigStore.isReady(AlConfigStore.loadBlynk());
+    return AlConfigStore.isConfigured();
   }
 
   function currentSavedSkinId() {

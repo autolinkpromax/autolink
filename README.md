@@ -21,11 +21,15 @@ window.AL_DEPLOY_CONFIG = {
 
 อัปโหลด GitHub Pages → ทุกคนที่เปิดลิงก์สั่งได้ (ใช้ repo ส่วนตัว)
 
-### B — เปิดจากเครื่อง AutoDoor-RF2 ครั้งแรก
+### B — เปิดจากเครื่อง AutoDoor-RF2 ครั้งแรก (แนะนำ)
 
-ตั้งค่า → Blynk IoT → **เปิด AutoLink** — ส่ง host/token/V pin (เปิด/หยุด/ปิด/ล็อก) อัตโนมัติ บันทึกในเครื่องนั้น
+ตั้งค่า → **AutoLink** → **เปิด AutoLink** — ส่งลิงก์ WebHook LAN (เปิด/หยุด/ปิด/ล็อก) อัตโนมัติ บันทึกในเบราว์เซอร์นั้น
 
-ปุ่ม **ล็อกระบบ** ส่งค่า Blynk V ล็อกเป็น `1` = ล็อก, `0` = ปลด (สลับจากหน้าเว็บ)
+ปุ่ม **ล็อกระบบ** ส่ง WebHook ล็อก Auto Link (`value=1` = ล็อก, `0` = ปลด)
+
+### C — Blynk Cloud (ทางเลือก)
+
+ใส่ Token ใน `deploy-config.js` หรือเปิดด้วย `postMessage` แบบ `autolink-blynk` — สั่งผ่าน Blynk API ได้จากทุกที่
 
 ครั้งหลังเปิด [index.html](https://autolinkpromax.github.io/autolink/index.html) ตรงๆ → ใช้ค่าที่บันทึกไว้ ไม่ต้องกรอก
 

@@ -1,7 +1,9 @@
 /** @typedef {{ host: string, token: string, pins: { open: number, stop: number, close: number, lock: number } }} AlBlynkConfig */
+/** @typedef {{ host: string, hooks: { open: string, stop: string, close: string, lockOn: string, lockOff: string } }} AlWebhookConfig */
 /** @typedef {{ activeId: string, customManifest?: object, customCss?: string }} AlSkinPrefs */
 
 const AL_BLYNK_KEY = 'autolink.blynk.v1';
+const AL_WEBHOOK_KEY = 'autolink.webhook.v1';
 const AL_SKIN_KEY = 'autolink.skin.v1';
 const AL_DEFAULT_HOST = 'sgp1.blynk.cloud';
 const AL_PUBLIC_PAGE = 'https://autolinkpromax.github.io/autolink';
@@ -68,8 +70,50 @@ const AlConfigStore = (function () {
     };
   }
 
-  function isReady(cfg) {
+  function defaultWebhook() {
+    return {
+      host: '',
+      hooks: { open: '', stop: '', close: '', lockOn: '', lockOff: '' }
+    };
+  }
+
+  function normalizeWebhook(raw) {
+    const d = defaultWebhook();
+    const src = raw || {};
+    const hooks = src.hooks || {};
+    return {
+      host: String(src.host || '').trim(),
+      hooks: {
+        open: String(hooks.open || '').trim(),
+        stop: String(hooks.stop || '').trim(),
+        close: String(hooks.close || '').trim(),
+        lockOn: String(hooks.lockOn || '').trim(),
+        lockOff: String(hooks.lockOff || '').trim()
+      }
+    };
+  }
+
+  function isWebhookReady(cfg) {
+    const h = cfg && cfg.hooks;
+    return !!(h && h.open && h.stop && h.close);
+  }
+
+  function isBlynkReady(cfg) {
     return !!(cfg && cfg.token && cfg.token.length >= 8 && cfg.host);
+  }
+
+  function isReady(cfg) {
+    return isBlynkReady(cfg);
+  }
+
+  function isConfigured() {
+    return isWebhookReady(loadWebhook()) || isBlynkReady(loadBlynk());
+  }
+
+  function activeMode() {
+    if (isWebhookReady(loadWebhook())) return 'webhook';
+    if (isBlynkReady(loadBlynk())) return 'blynk';
+    return 'none';
   }
 
   function maskToken(token) {
@@ -155,9 +199,24 @@ const AlConfigStore = (function () {
     return { merged: changed, hadToken: hadToken };
   }
 
-  /** รับ token จากหน้า AutoDoor (postMessage) — ไม่ต้องใส่ใน URL */
+  /** รับ config จากหน้า AutoDoor (postMessage) — ไม่ต้องใส่ใน URL */
   function ingestOpenerMessage(data) {
-    if (!data || data.type !== 'autolink-blynk') return false;
+    if (!data || !data.type) return false;
+
+    if (data.type === 'autolink-webhook') {
+      const wh = normalizeWebhook(data);
+      if (!isWebhookReady(wh)) return false;
+      saveWebhook(wh);
+      if (data.skin) {
+        const skin = loadSkinPrefs();
+        skin.activeId = String(data.skin).trim() || skin.activeId;
+        saveSkinPrefs(skin);
+      }
+      scrubUrlClean();
+      return true;
+    }
+
+    if (data.type !== 'autolink-blynk') return false;
     const cur = loadBlynk();
     if (data.host) cur.host = normalizeHost(data.host);
     if (data.token) cur.token = String(data.token).trim();
@@ -173,7 +232,7 @@ const AlConfigStore = (function () {
       saveSkinPrefs(skin);
     }
     scrubUrlClean();
-    return isReady(cur);
+    return isBlynkReady(cur);
   }
 
   function listenOpenerHandshake() {
@@ -212,24 +271,27 @@ const AlConfigStore = (function () {
   }
 
   function bootstrap() {
+    let wh = loadWebhook();
     let cfg = loadBlynk();
 
     if (window.opener) {
       scrubUrlClean();
       listenOpenerHandshake();
-    } else if (!isReady(cfg)) {
+    } else if (!isConfigured()) {
       ingestUrlParams();
+      wh = loadWebhook();
       cfg = loadBlynk();
     } else {
       scrubUrlClean();
     }
 
-    if (!isReady(cfg)) {
+    if (!isConfigured()) {
       applyDeployConfig();
+      wh = loadWebhook();
       cfg = loadBlynk();
     }
 
-    if (!isReady(cfg) && !window.opener) {
+    if (!isConfigured() && !window.opener) {
       listenOpenerHandshake();
     }
 
@@ -237,15 +299,34 @@ const AlConfigStore = (function () {
       scrubUrlClean();
     }
 
+    const mode = activeMode();
     return {
-      ready: isReady(cfg),
-      cfg: cfg,
-      source: isReady(cfg) ? 'ok' : 'missing'
+      ready: mode !== 'none',
+      mode: mode,
+      cfg: mode === 'webhook' ? wh : cfg,
+      source: mode !== 'none' ? mode : 'missing'
     };
   }
 
   function loadBlynk() {
     return normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
+  }
+
+  function loadWebhook() {
+    return normalizeWebhook(loadJson(AL_WEBHOOK_KEY, defaultWebhook));
+  }
+
+  function saveWebhook(cfg) {
+    return saveJson(AL_WEBHOOK_KEY, normalizeWebhook(cfg));
+  }
+
+  function clearWebhook() {
+    try {
+      localStorage.removeItem(AL_WEBHOOK_KEY);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   function clearBlynk() {
@@ -309,18 +390,26 @@ const AlConfigStore = (function () {
     AL_PUBLIC_PAGE,
     loadBlynk,
     saveBlynk,
+    loadWebhook,
+    saveWebhook,
     loadSkinPrefs,
     saveSkinPrefs,
     isReady,
+    isBlynkReady,
+    isWebhookReady,
+    isConfigured,
+    activeMode,
     maskToken,
     ingestUrlParams,
     ingestOpenerMessage,
     bootstrap,
     applyDeployConfig,
     clearBlynk,
+    clearWebhook,
     isSetupMode,
     exportBundle,
     importBundle,
-    normalizeBlynk
+    normalizeBlynk,
+    normalizeWebhook
   };
 })();
