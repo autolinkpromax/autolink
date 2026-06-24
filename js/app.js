@@ -268,12 +268,74 @@ const AlApp = (function () {
     }
   }
 
+  let statePollTimer = null;
+
+  function getBlynkConfigFromUrls() {
+    const blynkCfg = AlConfigStore.loadBlynk();
+    if (AlConfigStore.isBlynkReady(blynkCfg)) {
+      return { host: blynkCfg.host, token: blynkCfg.token };
+    }
+    
+    const wh = AlConfigStore.loadWebhook();
+    if (AlConfigStore.isWebhookReady(wh)) {
+      const url = wh.hooks.open || '';
+      if (url.includes('blynk.cloud')) {
+        try {
+          const u = new URL(url);
+          const token = u.searchParams.get('token');
+          if (token) {
+            return { host: u.hostname, token: token };
+          }
+        } catch (_) {}
+      }
+    }
+    return null;
+  }
+
+  async function pollBlynkDoorState() {
+    if (statePollTimer) {
+      clearTimeout(statePollTimer);
+      statePollTimer = null;
+    }
+    
+    const blynk = getBlynkConfigFromUrls();
+    if (!blynk) return;
+
+    try {
+      const url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V4';
+      const res = await fetch(url);
+      if (res.ok) {
+        const state = (await res.text()).trim().toLowerCase().replace(/"/g, ''); // "closed", "open", "stopped", "opening", "closing"
+        if (state === 'open' || state === 'closed' || state === 'stopped' || state === 'opening' || state === 'closing') {
+          const phase = state === 'opening' || state === 'closing' ? 'moving' : state;
+          const statusLabels = {
+            open: 'ประตูเปิด',
+            closed: 'ประตูปิด',
+            stopped: 'หยุดแล้ว',
+            opening: 'กำลังเปิดประตู…',
+            closing: 'กำลังปิดประตู…'
+          };
+          
+          if (AlGateController.getPhase() !== phase) {
+            AlGateController.restore({
+              phase: phase,
+              systemLocked: AlGateController.isSystemLocked(),
+              statusText: statusLabels[state] || ''
+            });
+          }
+        }
+      }
+    } catch (_) {}
+
+    statePollTimer = setTimeout(pollBlynkDoorState, 2500);
+  }
 
   function onConfigReady() {
     AlWebhook.rebuildCache();
     savedSkinId = currentSavedSkinId();
     remountSkin();
     syncChrome();
+    pollBlynkDoorState();
   }
 
   function init() {
@@ -288,8 +350,10 @@ const AlApp = (function () {
     } else {
       syncChrome();
     }
+    pollBlynkDoorState();
     window.addEventListener('autolink:config-ready', onConfigReady);
   }
+
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
