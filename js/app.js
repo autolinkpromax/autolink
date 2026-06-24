@@ -302,7 +302,8 @@ const AlApp = (function () {
     if (!blynk) return;
 
     try {
-      const url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V4';
+      const url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V3';
+
       const res = await fetch(url);
       if (res.ok) {
         const state = (await res.text()).trim().toLowerCase().replace(/"/g, ''); // "closed", "open", "stopped", "opening", "closing"
