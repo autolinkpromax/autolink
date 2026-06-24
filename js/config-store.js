@@ -390,16 +390,7 @@ const AlConfigStore = (function () {
     let list = listDevices();
     if (!list.length) {
       const classicBlynk = loadBlynk();
-      const classicWebhook = loadWebhook();
-      if (isWebhookReady(classicWebhook)) {
-        addOrUpdateDevice({
-          id: 'classic_webhook',
-          name: 'Device 1 (LAN)',
-          mode: 'webhook',
-          webhook: classicWebhook,
-          skin: loadSkinPrefs().activeId || 'classic'
-        });
-      } else if (isBlynkReady(classicBlynk)) {
+      if (isBlynkReady(classicBlynk)) {
         addOrUpdateDevice({
           id: 'classic_blynk',
           name: 'Device 1 (Blynk)',
@@ -407,6 +398,26 @@ const AlConfigStore = (function () {
           blynk: classicBlynk,
           skin: loadSkinPrefs().activeId || 'classic'
         });
+      }
+    }
+
+    // Clean up any insecure HTTP (LAN) devices from list
+    list = listDevices();
+    const originalLength = list.length;
+    list = list.filter(function(d) {
+      if (d.mode === 'webhook') {
+        const url = d.webhook?.hooks?.open || '';
+        return url.startsWith('https://');
+      }
+      return true;
+    });
+    if (list.length !== originalLength) {
+      saveDevices(list);
+      const activeId = getActiveDeviceId();
+      const stillExists = list.some(function(d) { return d.id === activeId; });
+      if (!stillExists) {
+        const nextActive = list[0] ? list[0].id : '';
+        setActiveDeviceId(nextActive);
       }
     }
 
@@ -438,6 +449,7 @@ const AlConfigStore = (function () {
       source: mode !== 'none' ? mode : 'missing'
     };
   }
+
 
   function loadBlynk() {
     return normalizeBlynk(loadJson(AL_BLYNK_KEY, defaultBlynk));
