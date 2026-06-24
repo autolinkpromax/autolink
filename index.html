@@ -29,13 +29,19 @@
 
     <header class="al-topbar">
 
-      <h1 class="al-title">AutoLink</h1>
+      <div class="al-brand">
+        <h1 class="al-title">AutoLink</h1>
+        <p class="al-subtitle" id="alReadyHint">กำลังโหลด…</p>
+      </div>
 
-      <p class="al-subtitle" id="alReadyHint">กำลังโหลด…</p>
+      <div class="al-device-selector-wrap" id="alDeviceSelectorWrap" style="margin-left:auto; margin-right:12px;" hidden>
+        <select id="alDeviceSelect" style="padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 14px; outline: none; max-width: 150px; cursor: pointer;"></select>
+      </div>
 
       <button type="button" class="al-setup-toggle" id="alSetupToggle" aria-expanded="false" aria-controls="alSetup" title="ตั้งค่า Skin" hidden>⚙</button>
 
     </header>
+
 
 
 
@@ -94,9 +100,14 @@
 
         <p class="al-setup-msg" id="alSetupMsg" role="status"></p>
 
+        <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:16px;">
+          <button type="button" class="al-btn" id="alDeleteDevice" style="background:#ef4444; color:white; border:none; width:100%; font-size:14px; padding:10px; border-radius:6px; cursor:pointer;">ลบอุปกรณ์นี้ออกจากรายการ</button>
+        </div>
+
       </form>
 
     </aside>
+
 
 
 

@@ -153,65 +153,166 @@ const AlConfigStore = (function () {
     }
   }
 
+  const AL_DEVICES_KEY = 'autolink.devices.v1';
+  const AL_ACTIVE_DEVICE_ID_KEY = 'autolink.activeDeviceId.v1';
+
+  function listDevices() {
+    return loadJson(AL_DEVICES_KEY, function() { return []; });
+  }
+
+  function saveDevices(list) {
+    return saveJson(AL_DEVICES_KEY, list);
+  }
+
+  function getActiveDeviceId() {
+    return localStorage.getItem(AL_ACTIVE_DEVICE_ID_KEY) || '';
+  }
+
+  function getActiveDevice() {
+    const list = listDevices();
+    const activeId = getActiveDeviceId();
+    if (!list.length) return null;
+    return list.find(function(d) { return d.id === activeId; }) || list[0];
+  }
+
+  function setActiveDeviceId(id) {
+    localStorage.setItem(AL_ACTIVE_DEVICE_ID_KEY, id);
+    syncActiveDeviceStorage();
+    window.dispatchEvent(new CustomEvent('autolink:active-device-changed'));
+  }
+
+  function syncActiveDeviceStorage() {
+    const dev = getActiveDevice();
+    if (!dev) {
+      clearBlynk();
+      clearWebhook();
+      return;
+    }
+    if (dev.mode === 'webhook') {
+      saveWebhook(dev.webhook);
+      clearBlynk();
+    } else {
+      saveBlynk(dev.blynk);
+      clearWebhook();
+    }
+    const skin = loadSkinPrefs();
+    skin.activeId = dev.skin || 'classic';
+    saveSkinPrefs(skin);
+  }
+
+  function addOrUpdateDevice(dev) {
+    const list = listDevices();
+    const idx = list.findIndex(function(d) { return d.id === dev.id; });
+    if (idx >= 0) {
+      list[idx] = Object.assign({}, list[idx], dev);
+    } else {
+      list.push(dev);
+    }
+    saveDevices(list);
+    setActiveDeviceId(dev.id);
+    window.dispatchEvent(new CustomEvent('autolink:devices-changed'));
+  }
+
+  function deleteDevice(id) {
+    let list = listDevices();
+    list = list.filter(function(d) { return d.id !== id; });
+    saveDevices(list);
+    const activeId = getActiveDeviceId();
+    if (activeId === id) {
+      const nextActive = list[0] ? list[0].id : '';
+      setActiveDeviceId(nextActive);
+    } else {
+      syncActiveDeviceStorage();
+    }
+    window.dispatchEvent(new CustomEvent('autolink:devices-changed'));
+  }
+
   function ingestUrlParams() {
     const p = parseParams(window.location.search, window.location.hash);
     if (!Object.keys(p).length) return { merged: false, hadToken: false };
 
-    const cur = loadBlynk();
-    let changed = false;
-    let hadToken = false;
-
-    if (p.host) {
-      cur.host = normalizeHost(p.host);
-      changed = true;
+    // Support Webhook Mode URL Params
+    if (p.wOpen || p.wStop || p.wClose || p.mode === 'webhook') {
+      const id = p.id || 'dev_' + Date.now();
+      const name = p.name || 'AutoDoor Device';
+      const wh = {
+        host: p.host || '',
+        hooks: {
+          open: p.wOpen || '',
+          stop: p.wStop || '',
+          close: p.wClose || '',
+          lockOn: p.wLockOn || '',
+          lockOff: p.wLockOff || ''
+        }
+      };
+      const newDev = {
+        id: id,
+        name: name,
+        mode: 'webhook',
+        webhook: wh,
+        skin: p.skin || 'classic'
+      };
+      addOrUpdateDevice(newDev);
+      scrubUrlClean();
+      return { merged: true, hadToken: false };
     }
+
+    // Support Blynk Mode URL Params
     if (p.token) {
+      const id = p.id || p.token.slice(-8);
+      const name = p.name || 'Blynk Device';
+      const cur = loadBlynk();
+      cur.host = normalizeHost(p.host);
       cur.token = String(p.token).trim();
-      hadToken = true;
-      changed = true;
-    }
-    if (p.vOpen != null) {
-      cur.pins.open = clampPin(p.vOpen, cur.pins.open);
-      changed = true;
-    }
-    if (p.vStop != null) {
-      cur.pins.stop = clampPin(p.vStop, cur.pins.stop);
-      changed = true;
-    }
-    if (p.vClose != null) {
-      cur.pins.close = clampPin(p.vClose, cur.pins.close);
-      changed = true;
-    }
-    if (p.vLock != null) {
-      cur.pins.lock = clampPin(p.vLock, cur.pins.lock);
-      changed = true;
-    }
+      if (p.vOpen != null) cur.pins.open = clampPin(p.vOpen, cur.pins.open);
+      if (p.vStop != null) cur.pins.stop = clampPin(p.vStop, cur.pins.stop);
+      if (p.vClose != null) cur.pins.close = clampPin(p.vClose, cur.pins.close);
+      if (p.vLock != null) cur.pins.lock = clampPin(p.vLock, cur.pins.lock);
 
-    if (changed) saveBlynk(cur);
+      const newDev = {
+        id: id,
+        name: name,
+        mode: 'blynk',
+        blynk: cur,
+        skin: p.skin || 'classic'
+      };
+      addOrUpdateDevice(newDev);
+      scrubUrlClean();
+      return { merged: true, hadToken: true };
+    }
 
     if (p.skin) {
       const skin = loadSkinPrefs();
       skin.activeId = String(p.skin).trim() || skin.activeId;
       saveSkinPrefs(skin);
+      
+      const dev = getActiveDevice();
+      if (dev) {
+        dev.skin = skin.activeId;
+        addOrUpdateDevice(dev);
+      }
     }
 
     scrubUrlClean();
-    return { merged: changed, hadToken: hadToken };
+    return { merged: false, hadToken: false };
   }
 
-  /** รับ config จากหน้า AutoLink ESP (postMessage) — ไม่ต้องใส่ใน URL */
   function ingestOpenerMessage(data) {
     if (!data || !data.type) return false;
 
     if (data.type === 'autolink-webhook') {
       const wh = normalizeWebhook(data);
       if (!isWebhookReady(wh)) return false;
-      saveWebhook(wh);
-      if (data.skin) {
-        const skin = loadSkinPrefs();
-        skin.activeId = String(data.skin).trim() || skin.activeId;
-        saveSkinPrefs(skin);
-      }
+      const id = data.id || 'dev_' + Date.now();
+      const name = data.name || 'AutoDoor Device';
+      const newDev = {
+        id: id,
+        name: name,
+        mode: 'webhook',
+        webhook: wh,
+        skin: data.skin || 'classic'
+      };
+      addOrUpdateDevice(newDev);
       scrubUrlClean();
       return true;
     }
@@ -225,12 +326,17 @@ const AlConfigStore = (function () {
     if (pins.stop != null) cur.pins.stop = clampPin(pins.stop, cur.pins.stop);
     if (pins.close != null) cur.pins.close = clampPin(pins.close, cur.pins.close);
     if (pins.lock != null) cur.pins.lock = clampPin(pins.lock, cur.pins.lock);
-    saveBlynk(cur);
-    if (data.skin) {
-      const skin = loadSkinPrefs();
-      skin.activeId = String(data.skin).trim() || skin.activeId;
-      saveSkinPrefs(skin);
-    }
+    
+    const id = data.id || cur.token.slice(-8) || 'dev_' + Date.now();
+    const name = data.name || 'Blynk Device';
+    const newDev = {
+      id: id,
+      name: name,
+      mode: 'blynk',
+      blynk: cur,
+      skin: data.skin || 'classic'
+    };
+    addOrUpdateDevice(newDev);
     scrubUrlClean();
     return isBlynkReady(cur);
   }
@@ -264,12 +370,15 @@ const AlConfigStore = (function () {
       if (!d || typeof d !== 'object') return false;
       const cfg = normalizeBlynk(d);
       if (!isReady(cfg)) return false;
-      saveBlynk(cfg);
-      if (d.skin) {
-        const skin = loadSkinPrefs();
-        skin.activeId = String(d.skin).trim() || skin.activeId;
-        saveSkinPrefs(skin);
-      }
+      
+      const newDev = {
+        id: 'deploy_config',
+        name: 'Deploy Device',
+        mode: 'blynk',
+        blynk: cfg,
+        skin: d.skin || 'classic'
+      };
+      addOrUpdateDevice(newDev);
       return true;
     } catch (_) {
       return false;
@@ -277,24 +386,39 @@ const AlConfigStore = (function () {
   }
 
   function bootstrap() {
-    let wh = loadWebhook();
-    let cfg = loadBlynk();
+    // Migration: if devices list is empty but classic config exists, add it to list
+    let list = listDevices();
+    if (!list.length) {
+      const classicBlynk = loadBlynk();
+      const classicWebhook = loadWebhook();
+      if (isWebhookReady(classicWebhook)) {
+        addOrUpdateDevice({
+          id: 'classic_webhook',
+          name: 'Device 1 (LAN)',
+          mode: 'webhook',
+          webhook: classicWebhook,
+          skin: loadSkinPrefs().activeId || 'classic'
+        });
+      } else if (isBlynkReady(classicBlynk)) {
+        addOrUpdateDevice({
+          id: 'classic_blynk',
+          name: 'Device 1 (Blynk)',
+          mode: 'blynk',
+          blynk: classicBlynk,
+          skin: loadSkinPrefs().activeId || 'classic'
+        });
+      }
+    }
 
     if (window.opener) {
       scrubUrlClean();
       listenOpenerHandshake();
-    } else if (!isConfigured()) {
-      ingestUrlParams();
-      wh = loadWebhook();
-      cfg = loadBlynk();
     } else {
-      scrubUrlClean();
+      ingestUrlParams();
     }
 
     if (!isConfigured()) {
       applyDeployConfig();
-      wh = loadWebhook();
-      cfg = loadBlynk();
     }
 
     if (!isConfigured() && !window.opener) {
@@ -305,11 +429,12 @@ const AlConfigStore = (function () {
       scrubUrlClean();
     }
 
+    syncActiveDeviceStorage();
     const mode = activeMode();
     return {
       ready: mode !== 'none',
       mode: mode,
-      cfg: mode === 'webhook' ? wh : cfg,
+      cfg: mode === 'webhook' ? loadWebhook() : loadBlynk(),
       source: mode !== 'none' ? mode : 'missing'
     };
   }
@@ -416,6 +541,12 @@ const AlConfigStore = (function () {
     exportBundle,
     importBundle,
     normalizeBlynk,
-    normalizeWebhook
+    normalizeWebhook,
+    listDevices,
+    setActiveDeviceId,
+    deleteDevice,
+    getActiveDevice,
+    getActiveDeviceId
   };
 })();
+

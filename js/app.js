@@ -81,7 +81,28 @@ const AlApp = (function () {
 
     const skinHost = $('alSkinHost');
     if (skinHost) skinHost.hidden = !ready;
+
+    // Sync device selector
+    const selWrap = $('alDeviceSelectorWrap');
+    const devSelect = $('alDeviceSelect');
+    if (selWrap && devSelect) {
+      const devList = AlConfigStore.listDevices();
+      if (ready && devList.length > 0) {
+        selWrap.hidden = false;
+        devSelect.innerHTML = '';
+        devList.forEach(function (d) {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = d.name;
+          opt.selected = d.id === AlConfigStore.getActiveDeviceId();
+          devSelect.appendChild(opt);
+        });
+      } else {
+        selWrap.hidden = true;
+      }
+    }
   }
+
 
   function syncSkinSelect(value) {
     const sel = $('alSkinSelect');
@@ -219,7 +240,30 @@ const AlApp = (function () {
         }
       });
     }
+
+    const devSelect = $('alDeviceSelect');
+    if (devSelect) {
+      devSelect.addEventListener('change', function () {
+        AlConfigStore.setActiveDeviceId(devSelect.value);
+        onConfigReady();
+      });
+    }
+
+    const delBtn = $('alDeleteDevice');
+    if (delBtn) {
+      delBtn.addEventListener('click', function () {
+        const activeId = AlConfigStore.getActiveDeviceId();
+        const activeDev = AlConfigStore.getActiveDevice();
+        if (!activeDev) return;
+        if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบอุปกรณ์ "' + activeDev.name + '" ออกจากหน้านี้?')) {
+          AlConfigStore.deleteDevice(activeId);
+          onConfigReady();
+          goHome();
+        }
+      });
+    }
   }
+
 
   function onConfigReady() {
     AlWebhook.rebuildCache();
