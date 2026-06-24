@@ -95,6 +95,8 @@ const AlApp = (function () {
           opt.value = d.id;
           opt.textContent = d.name;
           opt.selected = d.id === AlConfigStore.getActiveDeviceId();
+          opt.style.color = '#000000';
+          opt.style.backgroundColor = '#ffffff';
           devSelect.appendChild(opt);
         });
       } else {
@@ -256,7 +258,9 @@ const AlApp = (function () {
         const activeDev = AlConfigStore.getActiveDevice();
         if (!activeDev) return;
         if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบอุปกรณ์ "' + activeDev.name + '" ออกจากหน้านี้?')) {
+          const name = activeDev.name;
           AlConfigStore.deleteDevice(activeId);
+          alert('ลบอุปกรณ์ "' + name + '" เรียบร้อยแล้ว');
           onConfigReady();
           goHome();
         }
