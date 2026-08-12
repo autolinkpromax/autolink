@@ -45,7 +45,9 @@ const AlSkinEngine = (function () {
       const lbl = document.createElement('p');
       lbl.className = 'al-status-label';
       lbl.setAttribute('data-al-bind', 'statusLabel');
-      lbl.textContent = region.statusLabel || 'สถานะปัจจุบัน';
+      const baseText = region.statusLabel || 'สถานะปัจจุบัน';
+      lbl.setAttribute('data-base-label', baseText);
+      lbl.textContent = baseText;
       wrap.appendChild(lbl);
     }
 

@@ -62,7 +62,17 @@ const AlApp = (function () {
 
     const hint = $('alReadyHint');
     if (hint) {
-      hint.textContent = ready ? 'พร้อมใช้งาน' : 'กำลังโหลด…';
+      if (ready) {
+        if (lastOnlineState !== null) {
+          const statusStr = lastOnlineState ? 'Online' : 'Offline';
+          const badgeClass = lastOnlineState ? 'is-online' : 'is-offline';
+          hint.innerHTML = 'พร้อมใช้งาน <span class="al-online-badge ' + badgeClass + '">(' + statusStr + ')</span>';
+        } else {
+          hint.textContent = 'พร้อมใช้งาน';
+        }
+      } else {
+        hint.textContent = 'กำลังโหลด…';
+      }
     }
 
     const need = $('alNeedConfig');
@@ -269,6 +279,25 @@ const AlApp = (function () {
   }
 
   let statePollTimer = null;
+  let lastOnlineState = null;
+
+  function updateOnlineStatus(isOnline) {
+    lastOnlineState = isOnline;
+    const statusLabel = typeof AlSkinEngine !== 'undefined' ? AlSkinEngine.bind('statusLabel') : null;
+    if (statusLabel) {
+      const baseText = statusLabel.getAttribute('data-base-label') || 'สถานะปัจจุบัน';
+      const statusStr = isOnline ? 'Online' : 'Offline';
+      const badgeClass = isOnline ? 'is-online' : 'is-offline';
+      statusLabel.innerHTML = baseText + ' <span class="al-online-badge ' + badgeClass + '">(' + statusStr + ')</span>';
+    }
+
+    const hint = $('alReadyHint');
+    if (hint && isReady()) {
+      const statusStr = isOnline ? 'Online' : 'Offline';
+      const badgeClass = isOnline ? 'is-online' : 'is-offline';
+      hint.innerHTML = 'พร้อมใช้งาน <span class="al-online-badge ' + badgeClass + '">(' + statusStr + ')</span>';
+    }
+  }
 
   function getBlynkConfigFromUrls() {
     const blynkCfg = AlConfigStore.loadBlynk();
@@ -302,11 +331,24 @@ const AlApp = (function () {
     if (!blynk) return;
 
     try {
-      const url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V4';
+      const onlineUrl = 'https://' + blynk.host + '/external/api/isHardwareConnected?token=' + encodeURIComponent(blynk.token);
+      const v4Url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V4';
 
-      const res = await fetch(url);
-      if (res.ok) {
-        let rawState = (await res.text()).trim();
+      const [resOnline, resV4] = await Promise.all([
+        fetch(onlineUrl).catch(function() { return null; }),
+        fetch(v4Url).catch(function() { return null; })
+      ]);
+
+      let isOnline = false;
+      if (resOnline && resOnline.ok) {
+        const text = (await resOnline.text()).trim().toLowerCase();
+        isOnline = text === 'true';
+      }
+
+      updateOnlineStatus(isOnline);
+
+      if (resV4 && resV4.ok) {
+        let rawState = (await resV4.text()).trim();
         rawState = rawState.replace(/^\[?"?|"\]?$/g, '').trim();
 
         if (rawState) {

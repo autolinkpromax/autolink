@@ -171,6 +171,20 @@ body {
   letter-spacing: 0.04em;
 }
 
+.al-online-badge {
+  display: inline-block;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.al-online-badge.is-online {
+  color: #34d399;
+}
+
+.al-online-badge.is-offline {
+  color: #f87171;
+}
+
 .al-status-text {
   margin: 8px 0 0;
   font-size: 0.95rem;
