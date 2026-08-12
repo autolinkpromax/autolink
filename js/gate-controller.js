@@ -24,8 +24,11 @@ const AlGateController = (function () {
     phase = next;
     const gate = el();
     if (!gate) return;
-    gate.classList.remove('open', 'closed', 'moving', 'stopped');
+    gate.classList.remove('open', 'closed', 'moving', 'stopped', 'opening', 'closing');
     gate.classList.add(next);
+    if (next === 'opening' || next === 'closing') {
+      gate.classList.add('moving');
+    }
   }
 
   function setStatusText(text) {
@@ -75,13 +78,13 @@ const AlGateController = (function () {
 
   function onAction(action) {
     if (action === 'open') {
-      setPhase('moving');
+      setPhase('opening');
       setStatusText('กำลังเปิดประตู…');
       afterMoving('open', systemLocked ? 'ประตูเปิด (ระบบล็อก)' : 'ประตูเปิด');
       return;
     }
     if (action === 'close') {
-      setPhase('moving');
+      setPhase('closing');
       setStatusText('กำลังปิดประตู…');
       afterMoving('closed', systemLocked ? 'ประตูปิด (ระบบล็อก)' : 'ประตูปิด');
       return;

@@ -172,17 +172,42 @@ body {
 }
 
 .al-online-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-weight: 600;
-  margin-left: 4px;
+  margin-left: 6px;
+  text-transform: none;
+}
+
+.al-online-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .al-online-badge.is-online {
-  color: #34d399;
+  color: #3ecf8e;
+}
+.al-online-badge.is-online .al-online-dot {
+  background: #3ecf8e;
+  box-shadow: 0 0 10px rgba(62, 207, 142, 0.85);
+  animation: alDotPulse 2s ease-in-out infinite;
 }
 
 .al-online-badge.is-offline {
-  color: #f87171;
+  color: #ef4444;
+}
+.al-online-badge.is-offline .al-online-dot {
+  background: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.85);
+}
+
+@keyframes alDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
 }
 
 .al-status-text {

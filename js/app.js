@@ -66,7 +66,7 @@ const AlApp = (function () {
         if (lastOnlineState !== null) {
           const statusStr = lastOnlineState ? 'Online' : 'Offline';
           const badgeClass = lastOnlineState ? 'is-online' : 'is-offline';
-          hint.innerHTML = 'พร้อมใช้งาน <span class="al-online-badge ' + badgeClass + '">(' + statusStr + ')</span>';
+          hint.innerHTML = 'พร้อมใช้งาน <span class="al-online-badge ' + badgeClass + '"><span class="al-online-dot"></span>' + statusStr + '</span>';
         } else {
           hint.textContent = 'พร้อมใช้งาน';
         }
@@ -288,14 +288,14 @@ const AlApp = (function () {
       const baseText = statusLabel.getAttribute('data-base-label') || 'สถานะปัจจุบัน';
       const statusStr = isOnline ? 'Online' : 'Offline';
       const badgeClass = isOnline ? 'is-online' : 'is-offline';
-      statusLabel.innerHTML = baseText + ' <span class="al-online-badge ' + badgeClass + '">(' + statusStr + ')</span>';
+      statusLabel.innerHTML = baseText + ' <span class="al-online-badge ' + badgeClass + '"><span class="al-online-dot"></span>' + statusStr + '</span>';
     }
 
     const hint = $('alReadyHint');
     if (hint && isReady()) {
       const statusStr = isOnline ? 'Online' : 'Offline';
       const badgeClass = isOnline ? 'is-online' : 'is-offline';
-      hint.innerHTML = 'พร้อมใช้งาน <span class="al-online-badge ' + badgeClass + '">(' + statusStr + ')</span>';
+      hint.innerHTML = 'พร้อมใช้งาน <span class="al-online-badge ' + badgeClass + '"><span class="al-online-dot"></span>' + statusStr + '</span>';
     }
   }
 
@@ -354,9 +354,9 @@ const AlApp = (function () {
         if (rawState) {
           let phase = 'closed';
           if (rawState.includes('กำลังเปิด') || rawState.includes('opening')) {
-            phase = 'moving';
+            phase = 'opening';
           } else if (rawState.includes('กำลังปิด') || rawState.includes('closing')) {
-            phase = 'moving';
+            phase = 'closing';
           } else if (rawState.includes('เปิด') || rawState === 'open') {
             phase = 'open';
           } else if (rawState.includes('ปิด') || rawState === 'closed') {
