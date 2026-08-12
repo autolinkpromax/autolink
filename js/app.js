@@ -280,6 +280,7 @@ const AlApp = (function () {
 
   let statePollTimer = null;
   let lastOnlineState = null;
+  let pollCycleCount = 0;
 
   function updateOnlineStatus(isOnline) {
     lastOnlineState = isOnline;
@@ -326,26 +327,40 @@ const AlApp = (function () {
       clearTimeout(statePollTimer);
       statePollTimer = null;
     }
+
+    // Quota Saver: If user switched tabs / page is hidden, poll very slowly (30s)
+    if (document.hidden) {
+      statePollTimer = setTimeout(pollBlynkDoorState, 30000);
+      return;
+    }
     
     const blynk = getBlynkConfigFromUrls();
     if (!blynk) return;
 
+    pollCycleCount++;
+
+    // Quota Saver: Check isHardwareConnected only every 3rd cycle (~15s) or initial load
+    const shouldCheckOnline = (pollCycleCount % 3 === 1) || (lastOnlineState === null);
+
     try {
-      const onlineUrl = 'https://' + blynk.host + '/external/api/isHardwareConnected?token=' + encodeURIComponent(blynk.token);
       const v4Url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V4';
+      const onlineUrl = shouldCheckOnline 
+        ? 'https://' + blynk.host + '/external/api/isHardwareConnected?token=' + encodeURIComponent(blynk.token)
+        : null;
 
-      const [resOnline, resV4] = await Promise.all([
-        fetch(onlineUrl).catch(function() { return null; }),
-        fetch(v4Url).catch(function() { return null; })
-      ]);
+      const fetchOnlinePromise = onlineUrl 
+        ? fetch(onlineUrl).catch(function() { return null; }) 
+        : Promise.resolve(null);
+      const fetchV4Promise = fetch(v4Url).catch(function() { return null; });
 
-      let isOnline = false;
+      const [resOnline, resV4] = await Promise.all([fetchOnlinePromise, fetchV4Promise]);
+
       if (resOnline && resOnline.ok) {
         const text = (await resOnline.text()).trim().toLowerCase();
-        isOnline = text === 'true';
+        updateOnlineStatus(text === 'true');
       }
 
-      updateOnlineStatus(isOnline);
+      let isMoving = false;
 
       if (resV4 && resV4.ok) {
         let rawState = (await resV4.text()).trim();
@@ -355,8 +370,10 @@ const AlApp = (function () {
           let phase = 'closed';
           if (rawState.includes('กำลังเปิด') || rawState.includes('opening')) {
             phase = 'opening';
+            isMoving = true;
           } else if (rawState.includes('กำลังปิด') || rawState.includes('closing')) {
             phase = 'closing';
+            isMoving = true;
           } else if (rawState.includes('เปิด') || rawState === 'open') {
             phase = 'open';
           } else if (rawState.includes('ปิด') || rawState === 'closed') {
@@ -378,11 +395,26 @@ const AlApp = (function () {
             });
           }
         }
+      } else if (resV4 && !resV4.ok && resV4.status !== 0) {
+        // If server returns error status, update to offline
+        updateOnlineStatus(false);
       }
-    } catch (_) {}
 
-    statePollTimer = setTimeout(pollBlynkDoorState, 2500);
+      // Dynamic poll interval: 2.5s while door is moving, 5.0s when stationary to save quota
+      const pollInterval = isMoving ? 2500 : 5000;
+      statePollTimer = setTimeout(pollBlynkDoorState, pollInterval);
+
+    } catch (_) {
+      statePollTimer = setTimeout(pollBlynkDoorState, 6000);
+    }
   }
+
+  // Quota Saver: Resume polling immediately when user returns to this browser tab
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      pollBlynkDoorState();
+    }
+  });
 
   function onConfigReady() {
     AlWebhook.rebuildCache();
