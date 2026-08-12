@@ -302,26 +302,37 @@ const AlApp = (function () {
     if (!blynk) return;
 
     try {
-      const url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V3';
+      const url = 'https://' + blynk.host + '/external/api/get?token=' + encodeURIComponent(blynk.token) + '&V4';
 
       const res = await fetch(url);
       if (res.ok) {
-        const state = (await res.text()).trim().toLowerCase().replace(/"/g, ''); // "closed", "open", "stopped", "opening", "closing"
-        if (state === 'open' || state === 'closed' || state === 'stopped' || state === 'opening' || state === 'closing') {
-          const phase = state === 'opening' || state === 'closing' ? 'moving' : state;
-          const statusLabels = {
-            open: 'ประตูเปิด',
-            closed: 'ประตูปิด',
-            stopped: 'หยุดแล้ว',
-            opening: 'กำลังเปิดประตู…',
-            closing: 'กำลังปิดประตู…'
-          };
-          
-          if (AlGateController.getPhase() !== phase) {
+        let rawState = (await res.text()).trim();
+        rawState = rawState.replace(/^\[?"?|"\]?$/g, '').trim();
+
+        if (rawState) {
+          let phase = 'closed';
+          if (rawState.includes('กำลังเปิด') || rawState.includes('opening')) {
+            phase = 'moving';
+          } else if (rawState.includes('กำลังปิด') || rawState.includes('closing')) {
+            phase = 'moving';
+          } else if (rawState.includes('เปิด') || rawState === 'open') {
+            phase = 'open';
+          } else if (rawState.includes('ปิด') || rawState === 'closed') {
+            phase = 'closed';
+          } else if (rawState.includes('หยุด') || rawState === 'stopped') {
+            phase = 'stopped';
+          }
+
+          let displayStatus = rawState;
+          if (AlGateController.isSystemLocked() && !displayStatus.includes('ระบบล็อก')) {
+            displayStatus += ' (ระบบล็อก)';
+          }
+
+          if (AlGateController.getPhase() !== phase || AlGateController.snapshot().statusText !== displayStatus) {
             AlGateController.restore({
               phase: phase,
               systemLocked: AlGateController.isSystemLocked(),
-              statusText: statusLabels[state] || ''
+              statusText: displayStatus
             });
           }
         }
